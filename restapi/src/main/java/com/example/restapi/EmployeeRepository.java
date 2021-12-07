@@ -18,16 +18,23 @@ public class EmployeeRepository {
         return employees;
     }
 
-    public Employee getEmployeesByID(Integer id){
+    public Employee getById(Integer id){
         return employees.stream()
                 .filter(employee -> employee.getId().equals(id)).
                 findFirst()
                 .orElseThrow(NoEmployeesFoundException::new);
     }
 
-    public List<Employee> getEmployeesByGender(String gender) {
+    public List<Employee> getByGender(String gender) {
         return employees.stream()
                 .filter(employee -> employee.getGender().equals(gender))
                 .collect(Collectors.toList());
+    }
+
+    public Employee save(Integer id, Employee updatedEmployee) {
+        Employee employee = getById(id);
+        employees.remove(employee);
+        employees.add(updatedEmployee);
+        return updatedEmployee;
     }
 }

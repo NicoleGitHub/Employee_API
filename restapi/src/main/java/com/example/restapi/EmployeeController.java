@@ -20,12 +20,18 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public Employee getEmployeeByID(@PathVariable Integer id) {
-        return employeeRepository.getEmployeesByID(id);
+    public Employee getEmployeesByID(@PathVariable Integer id) {
+        return employeeRepository.getById(id);
     }
 
     @GetMapping(params = {"gender"})
     public List<Employee> getEmployeesByGender(@RequestParam String gender) {
-        return employeeRepository.getEmployeesByGender(gender);
+        return employeeRepository.getByGender(gender);
     }
+
+    @PutMapping("/{id}")
+    public Employee editEmployee(@PathVariable Integer id, @RequestBody Employee updatedEmployee) {
+        return employeeRepository.save(id, updatedEmployee);
+    }
+
 }
