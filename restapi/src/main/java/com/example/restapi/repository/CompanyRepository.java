@@ -44,4 +44,21 @@ public class CompanyRepository {
     public List<Company> findByPage(Integer page, Integer pageSize) {
         return companies.stream().skip((long) (page - 1) * pageSize).limit(pageSize).collect(Collectors.toList());
     }
+
+    public Company create(Company company) {
+        Integer nextId = companies.stream()
+                .mapToInt(Company::getId)
+                .max()
+                .orElse(0)+1;
+        company.setId(nextId);
+        companies.add(company);
+        return company;
+    }
+
+//    public Company save(Integer id, Company updatedCompany) {
+//        Company company = getById(id);
+//        companies.remove(company);
+//        companies.add(updatedCompany);
+//        return updatedCompany;
+//    }
 }
