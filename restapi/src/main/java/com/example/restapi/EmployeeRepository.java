@@ -25,8 +25,8 @@ public class EmployeeRepository {
 
     public Employee getById(Integer id){
         return employees.stream()
-                .filter(employee -> employee.getId().equals(id)).
-                findFirst()
+                .filter(employee -> employee.getId().equals(id))
+                .findFirst()
                 .orElseThrow(NoEmployeesFoundException::new);
     }
 
@@ -44,7 +44,23 @@ public class EmployeeRepository {
     }
 
     public List<Employee> findByPage(Integer page, Integer pageSize) {
-        return employees.stream().filter(employee -> employee.getId() > pageSize*(page - 1) && employee.getId() <= pageSize*page).collect(Collectors.toList());
+        return employees.stream().skip((long) (page - 1 ) * pageSize).limit(pageSize).collect(Collectors.toList());
     }
-    
+
+    public Employee create(Employee employee) {
+        Integer nextId = employees.stream()
+                                .mapToInt(Employee::getId)
+                                .max()
+                                .orElse(0)+1;
+        employee.setId(nextId);
+        employees.add(employee);
+        return employee;
+    }
+
+    public Employee delete(Integer id) {
+        Employee employee = getById(id);
+        Employee deletedEmployee = employee;
+        employees.remove(employee);
+        return deletedEmployee;
+    }
 }

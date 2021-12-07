@@ -1,5 +1,7 @@
 package com.example.restapi;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,12 +36,18 @@ public class EmployeeController {
         return employeeRepository.findByPage(page, pageSize);
     }
 
-
+    @PostMapping
+    public ResponseEntity addEmployee(@RequestBody Employee employee) {
+        return new ResponseEntity<>(employeeRepository.create(employee), HttpStatus.CREATED);
+    }
 
     @PutMapping("/{id}")
     public Employee editEmployee(@PathVariable Integer id, @RequestBody Employee updatedEmployee) {
         return employeeRepository.save(id, updatedEmployee);
     }
 
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteEmployee(@PathVariable Integer id) {
+        return new ResponseEntity<>(employeeRepository.delete(id), HttpStatus.NO_CONTENT);
+    }
 }
