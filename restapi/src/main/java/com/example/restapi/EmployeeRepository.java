@@ -11,7 +11,12 @@ public class EmployeeRepository {
     private List<Employee> employees = new ArrayList<>();
 
     public EmployeeRepository() {
-        employees.add(new Employee(1, "John Doe", 100, "male", 10000000));
+        employees.add(new Employee(1, "name one", 100, "male", 10000000));
+        employees.add(new Employee(2, "name two", 200, "male", 20000000));
+        employees.add(new Employee(3, "name three", 300, "male", 30000000));
+        employees.add(new Employee(4, "name four", 400, "female", 40000000));
+        employees.add(new Employee(5, "name five", 500, "female", 50000000));
+        employees.add(new Employee(6, "name six", 600, "female", 60000000));
     }
 
     public List<Employee> getAll() {
@@ -37,4 +42,9 @@ public class EmployeeRepository {
         employees.add(updatedEmployee);
         return updatedEmployee;
     }
+
+    public List<Employee> findByPage(Integer page, Integer pageSize) {
+        return employees.stream().filter(employee -> employee.getId() > pageSize*(page - 1) && employee.getId() <= pageSize*page).collect(Collectors.toList());
+    }
+    
 }

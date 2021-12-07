@@ -29,9 +29,17 @@ public class EmployeeController {
         return employeeRepository.getByGender(gender);
     }
 
+    @GetMapping(params = {"page", "pageSize"})
+    public List<Employee> getEmployeeByPage(@RequestParam Integer page, @RequestParam Integer pageSize) {
+        return employeeRepository.findByPage(page, pageSize);
+    }
+
+
+
     @PutMapping("/{id}")
     public Employee editEmployee(@PathVariable Integer id, @RequestBody Employee updatedEmployee) {
         return employeeRepository.save(id, updatedEmployee);
     }
+
 
 }
