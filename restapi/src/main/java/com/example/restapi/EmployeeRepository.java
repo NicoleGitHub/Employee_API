@@ -11,7 +11,7 @@ public class EmployeeRepository {
     private List<Employee> employees = new ArrayList<>();
 
     public EmployeeRepository() {
-        employees.add(new Employee(1, "John Doe", 100, "Male", 10000000));
+        employees.add(new Employee(1, "John Doe", 100, "male", 10000000));
     }
 
     public List<Employee> getAll() {
@@ -19,7 +19,15 @@ public class EmployeeRepository {
     }
 
     public Employee getEmployeesByID(Integer id){
-        System.out.print(id);
-        return employees.stream().filter(employee -> employee.getId().equals(id)).findFirst().orElse(null);
+        return employees.stream()
+                .filter(employee -> employee.getId().equals(id)).
+                findFirst()
+                .orElseThrow(NoEmployeesFoundException::new);
+    }
+
+    public List<Employee> getEmployeesByGender(String gender) {
+        return employees.stream()
+                .filter(employee -> employee.getGender().equals(gender))
+                .collect(Collectors.toList());
     }
 }
