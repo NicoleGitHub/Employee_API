@@ -1,5 +1,7 @@
-package com.example.restapi;
+package com.example.restapi.repository;
 
+import com.example.restapi.exception.NoEmployeesFoundException;
+import com.example.restapi.object.Employee;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
