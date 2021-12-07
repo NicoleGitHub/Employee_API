@@ -49,4 +49,9 @@ public class CompanyController {
         return companyRepository.save(id, updatedCompany);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteEmployee(@PathVariable Integer id) {
+        return new ResponseEntity<>(companyRepository.delete(id), HttpStatus.NO_CONTENT);
+    }
+
 }
