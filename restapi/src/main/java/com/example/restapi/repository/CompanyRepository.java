@@ -1,5 +1,7 @@
 package com.example.restapi.repository;
 
+import com.example.restapi.exception.NoCompaniesFoundException;
+import com.example.restapi.exception.NoEmployeesFoundException;
 import com.example.restapi.object.Company;
 import com.example.restapi.object.Employee;
 import org.springframework.stereotype.Repository;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class CompanyRepository {
@@ -27,4 +30,18 @@ public class CompanyRepository {
         return companies;
     }
 
+    public Company getById(Integer id) {
+        return companies.stream()
+                .filter(company -> company.getId().equals(id))
+                .findFirst()
+                .orElseThrow(NoCompaniesFoundException::new);
+    }
+
+    public List<Employee> getEmployeesById(Integer id) {
+        return getById(id).getEmployees();
+    }
+
+    public List<Company> findByPage(Integer page, Integer pageSize) {
+        return companies.stream().skip((long) (page - 1) * pageSize).limit(pageSize).collect(Collectors.toList());
+    }
 }

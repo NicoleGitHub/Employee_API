@@ -1,10 +1,9 @@
 package com.example.restapi.controller;
 
 import com.example.restapi.object.Company;
+import com.example.restapi.object.Employee;
 import com.example.restapi.repository.CompanyRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +21,22 @@ public class CompanyController {
     public List<Company> getAllCompanies() {
         return companyRepository.getAll();
     }
+
+    @GetMapping("/{id}")
+    public Company getCompaniesByID(@PathVariable Integer id) {
+        return companyRepository.getById(id);
+    }
+
+    @GetMapping("/{id}/employees")
+    public List<Employee> getEmployeesByID(@PathVariable Integer id) {
+        return companyRepository.getEmployeesById(id);
+    }
+
+    @GetMapping(params = {"page", "pageSize"})
+    public List<Company> getCompaniesByPage(@RequestParam Integer page, @RequestParam Integer pageSize) {
+        return companyRepository.findByPage(page, pageSize);
+    }
+
+
 
 }

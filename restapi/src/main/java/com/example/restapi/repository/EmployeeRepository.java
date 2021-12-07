@@ -46,7 +46,7 @@ public class EmployeeRepository {
     }
 
     public List<Employee> findByPage(Integer page, Integer pageSize) {
-        return employees.stream().skip((long) (page - 1 ) * pageSize).limit(pageSize).collect(Collectors.toList());
+        return employees.stream().skip((long) (page - 1) * pageSize).limit(pageSize).collect(Collectors.toList());
     }
 
     public Employee create(Employee employee) {
