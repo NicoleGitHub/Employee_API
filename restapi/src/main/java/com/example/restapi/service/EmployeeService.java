@@ -24,6 +24,7 @@ public class EmployeeService {
     }
 
     public List<Employee> getByGender(String gender) {
+        System.out.println("here" + employeeRepository.getByGender(gender));
         return employeeRepository.getByGender(gender);
     }
 

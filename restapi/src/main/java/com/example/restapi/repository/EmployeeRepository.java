@@ -33,6 +33,9 @@ public class EmployeeRepository {
     }
 
     public List<Employee> getByGender(String gender) {
+        System.out.println("HERE" + employees.stream()
+                .filter(employee -> employee.getGender().equals(gender))
+                .collect(Collectors.toList()).toString());
         return employees.stream()
                 .filter(employee -> employee.getGender().equals(gender))
                 .collect(Collectors.toList());

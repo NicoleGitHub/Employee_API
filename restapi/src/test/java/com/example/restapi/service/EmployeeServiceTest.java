@@ -65,15 +65,19 @@ public class EmployeeServiceTest {
     @Test
     void should_return_employees_when_get_employee_given_gender_male() {
         //given
+        String gender = "male";
         List<Employee> employees = Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000),
                 new Employee(2, "Jane Doe", 21, "female", 2000));
+        List<Employee> employeesWithMale = Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000));
+        given(employeeRepository.getByGender(gender))
+                .willReturn(employeesWithMale);
 
-        List<Employee> employeesWithoutMale = employees.stream().filter(employee -> employee.getGender().equals("male")).collect(Collectors.toList());
         //when
-        List<Employee> actualList = employeeService.getByGender("male");
+        List<Employee> actualList = employeeService.getByGender(gender);
 
         //then
-        assertEquals(employeesWithoutMale, actualList);
+        assertEquals(employeesWithMale, actualList);
     }
+    
 
 }
