@@ -63,6 +63,20 @@ public class EmployeeServiceTest {
     }
 
     @Test
+    void should_return_employee_when_save_page_employee() {
+        //given
+        Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
+        given(employeeRepository.save(employee.getId(), employee))
+                .willReturn(employee);
+
+        //when
+        Employee actual = employeeService.save(employee.getId(), employee);
+
+        //then
+        assertEquals(employee, actual);
+    }
+
+    @Test
     void should_return_employees_when_get_by_gender_given_gender_male() {
         //given
         String gender = "male";
@@ -95,6 +109,21 @@ public class EmployeeServiceTest {
 
         //then
         assertEquals(employeesOnPage, actualList);
+    }
+
+    @Test
+    void should_return_employee_when_create_employee_given_employee() {
+        //given
+        Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
+
+        given(employeeRepository.create(employee))
+                .willReturn(employee);
+
+        //when
+        Employee actual = employeeService.create(employee);
+
+        //then
+        assertEquals(employee, actual);
     }
 
     private void createThreeEmployees() {

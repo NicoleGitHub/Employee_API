@@ -45,7 +45,7 @@ public class EmployeeRepository {
         Employee employee = getById(id);
         employees.remove(employee);
         employees.add(updatedEmployee);
-        return employee;
+        return updatedEmployee;
     }
 
     public List<Employee> findByPage(Integer page, Integer pageSize) {
