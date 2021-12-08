@@ -132,9 +132,12 @@ public class CompanyServiceTest {
         Company updateCompany = new Company(1, "Coffee & Tea Shop", new ArrayList<>());
         Company company = companies.get(0);
         Integer companyId = updateCompany.getId();
+
         given(companyService.findById(companyId))
                 .willReturn(company);
+
         company.setCompanyName(updateCompany.getCompanyName());
+
         given(companyRepository.save(companyId, company))
                 .willReturn(updateCompany);
 
@@ -143,6 +146,23 @@ public class CompanyServiceTest {
 
         //then
         assertEquals(updateCompany, actual);
+    }
+
+    @Test
+    void should_when_delete_company_given_id() {
+        //given
+        List<Company> companies = createCompanies();
+        Company company = companies.get(0);
+        Integer companyId = company.getId();
+
+        given(companyRepository.findById(companyId))
+                .willReturn(company);
+
+        //when
+        companyService.delete(companyId);
+
+        //then
+        verify(companyRepository).delete(companyId);
     }
 
     public List<Company> createCompanies() {
