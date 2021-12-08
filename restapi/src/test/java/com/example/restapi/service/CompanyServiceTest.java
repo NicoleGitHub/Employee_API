@@ -110,6 +110,21 @@ public class CompanyServiceTest {
         assertEquals(companiesOnPage, actualList);
     }
 
+    @Test
+    void should_company_when_create_company_given_company() {
+        //given
+        Company company = new Company(1, "Coffee Shop", new ArrayList<>());
+        given(companyRepository.create(company))
+                .willReturn(company);
+
+        //when
+        Company actual = companyService.create(company);
+
+        //then
+        verify(companyRepository).create(company);
+        assertEquals(company, actual);
+    }
+
     public List<Company> createCompanies() {
         return Arrays.asList(new Company(1, "Coffee Shop", new ArrayList<>()),
                 new Company(2, "Tea Shop", Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000))),
