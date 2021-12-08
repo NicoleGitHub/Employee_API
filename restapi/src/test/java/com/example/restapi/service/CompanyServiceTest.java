@@ -54,6 +54,21 @@ public class CompanyServiceTest {
         assertEquals(companies.get(0), actual);
     }
 
+    @Test
+    void should_when_addEmployee_given_company_id_and_employee() {
+        //given
+        List<Company> companies = createCompanies();
+        Integer companyId = companies.get(0).getId();
+        Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
+        given(companyRepository.findById(companyId))
+                .willReturn(companies.get(0));
+        //when
+        companyService.addEmployee(companyId, employee);
+
+        //then
+        verify(companyRepository).addEmployee(companyId, employee);
+    }
+
     public List<Company> createCompanies() {
         return Arrays.asList(new Company(1, "Coffee Shop", new ArrayList<>()),
                 new Company(2, "Tea Shop", new ArrayList<>()),

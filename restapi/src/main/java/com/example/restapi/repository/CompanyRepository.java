@@ -24,8 +24,8 @@ public class CompanyRepository {
             addEmployee(2, new Employee(1, "name five", 500, "male", 50000000));
     }
 
-    public void addEmployee(Integer id, Employee employee) {
-        Company company = findById(id);
+    public void addEmployee(Integer companyId, Employee employee) {
+        Company company = findById(companyId);
         Integer nextId = company.getEmployees().stream()
                 .mapToInt(Employee::getId)
                 .max()
