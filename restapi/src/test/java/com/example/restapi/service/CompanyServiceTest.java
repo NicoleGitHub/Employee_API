@@ -44,6 +44,7 @@ public class CompanyServiceTest {
     void should_return_employees_when_findAll_given() {
         //given
         List<Company> companies = createCompanies();
+
         given(companyRepository.findAll())
                 .willReturn(companies);
 
@@ -60,6 +61,7 @@ public class CompanyServiceTest {
         //given
         List<Company> companies = createCompanies();
         Integer companyId = companies.get(0).getId();
+
         given(companyRepository.findById(companyId))
                 .willReturn(companies.get(0));
 
@@ -77,6 +79,7 @@ public class CompanyServiceTest {
         List<Company> companies = createCompanies();
         Integer companyId = companies.get(1).getId();
         List<Employee> employees = companies.get(1).getEmployees();
+
         given(companyRepository.findEmployeesByCompanyId(companyId))
                 .willReturn(employees);
 
@@ -86,6 +89,25 @@ public class CompanyServiceTest {
         //then
         verify(companyRepository).findEmployeesByCompanyId(companyId);
         assertEquals(employees, actualList);
+    }
+
+    @Test
+    void should_return_companies_when_findByPage_given_page_and_pageSize() {
+        //given
+        List<Company> companies = createCompanies();
+        Integer page = 1;
+        Integer pageSize = 2;
+        List<Company> companiesOnPage = companies.subList(1,2);
+
+        given(companyRepository.findByPage(page, pageSize))
+                .willReturn(companiesOnPage);
+
+        //when
+        List<Employee> actualList = companyService.findByPage(page, pageSize);
+
+        //then
+        verify(companyRepository).findByPage(page, pageSize);
+        assertEquals(companiesOnPage, actualList);
     }
 
     public List<Company> createCompanies() {
