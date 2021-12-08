@@ -126,6 +126,18 @@ public class EmployeeServiceTest {
         assertEquals(employee, actual);
     }
 
+    @Test
+    void should_return_nothing_when_delete_employee_given_id() {
+        //given
+        Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
+
+        //when
+        employeeService.delete(employee.getId());
+
+        //then
+        verify(employeeRepository).delete(employee.getId());
+    }
+
     private void createThreeEmployees() {
         Employee employee1 = new Employee(1, "John Doe", 20, "male", 1000);
         employeeRepository.create(employee1);
