@@ -13,12 +13,19 @@ public class EmployeeRepository {
     private List<Employee> employees = new ArrayList<>();
 
     public EmployeeRepository() {
-        employees.add(new Employee(1, "name one", 100, "male", 10000000));
-        employees.add(new Employee(2, "name two", 200, "male", 20000000));
-        employees.add(new Employee(3, "name three", 300, "male", 30000000));
-        employees.add(new Employee(4, "name four", 400, "female", 40000000));
-        employees.add(new Employee(5, "name five", 500, "female", 50000000));
-        employees.add(new Employee(6, "name six", 600, "female", 60000000));
+        employees.add(new Employee(1, "name one", 100, "male", 10000000, 1));
+        employees.add(new Employee(2, "name two", 200, "male", 20000000, 1));
+        employees.add(new Employee(3, "name three", 300, "male", 30000000, 2));
+        employees.add(new Employee(4, "name four", 400, "female", 40000000, 2));
+        employees.add(new Employee(5, "name five", 500, "female", 50000000, null));
+        employees.add(new Employee(6, "name six", 600, "female", 60000000, null));
+    }
+
+    public List<Employee> getEmployees() {
+        if(employees.isEmpty()) {
+            throw new NoEmployeesFoundException();
+        }
+        return employees;
     }
 
     public List<Employee> findAll() {
@@ -33,10 +40,7 @@ public class EmployeeRepository {
     }
 
     public List<Employee> findByGender(String gender) {
-        System.out.println("HERE" + employees.stream()
-                .filter(employee -> employee.getGender().equals(gender))
-                .collect(Collectors.toList()).toString());
-        return employees.stream()
+        return getEmployees().stream()
                 .filter(employee -> employee.getGender().equals(gender))
                 .collect(Collectors.toList());
     }
@@ -49,7 +53,7 @@ public class EmployeeRepository {
     }
 
     public List<Employee> findByPage(Integer page, Integer pageSize) {
-        return employees.stream().skip((long) (page - 1) * pageSize).limit(pageSize).collect(Collectors.toList());
+        return getEmployees().stream().skip((long) (page - 1) * pageSize).limit(pageSize).collect(Collectors.toList());
     }
 
     public Employee create(Employee employee) {
@@ -70,4 +74,7 @@ public class EmployeeRepository {
         employees.clear();
     }
 
+    public List<Employee> findEmployeesByCompanyId(Integer companyId) {
+        return getEmployees().stream().filter(employee -> companyId.equals(employee.getCompanyId())).collect(Collectors.toList());
+    }
 }

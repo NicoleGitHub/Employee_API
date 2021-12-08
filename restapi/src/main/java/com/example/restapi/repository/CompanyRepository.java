@@ -2,7 +2,6 @@ package com.example.restapi.repository;
 
 import com.example.restapi.exception.NoCompaniesFoundException;
 import com.example.restapi.object.Company;
-import com.example.restapi.object.Employee;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -14,24 +13,9 @@ public class CompanyRepository {
     private List<Company> companies = new ArrayList<>();
 
     public CompanyRepository() {
-        companies.add(new Company(1, "company one", new ArrayList<>()));
-            addEmployee(1,new Employee(1, "name one", 100, "male", 10000000));
-            addEmployee(1,new Employee(1, "name one", 100, "male", 10000000));
-        companies.add(new Company(2, "company two", new ArrayList<>()));
-            addEmployee(2, new Employee(1, "name three", 300, "female", 30000000));
-            addEmployee(2, new Employee(1, "name four", 400, "male", 40000000));
-        companies.add(new Company(3, "company three", new ArrayList<>()));
-            addEmployee(2, new Employee(1, "name five", 500, "male", 50000000));
-    }
-
-    public void addEmployee(Integer companyId, Employee employee) {
-        Company company = findById(companyId);
-        Integer nextId = company.getEmployees().stream()
-                .mapToInt(Employee::getId)
-                .max()
-                .orElse(0)+1;
-        employee.setId(nextId);
-        company.getEmployees().add(employee);
+        companies.add(new Company(1, "company one"));
+        companies.add(new Company(2, "company two"));
+        companies.add(new Company(3, "company three"));
     }
 
     public List<Company> findAll() {
@@ -43,10 +27,6 @@ public class CompanyRepository {
                 .filter(company -> company.getId().equals(id))
                 .findFirst()
                 .orElseThrow(NoCompaniesFoundException::new);
-    }
-
-    public List<Employee> findEmployeesByCompanyId(Integer id) {
-        return findById(id).getEmployees();
     }
 
     public List<Company> findByPage(Integer page, Integer pageSize) {

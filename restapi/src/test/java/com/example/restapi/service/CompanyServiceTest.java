@@ -3,13 +3,16 @@ package com.example.restapi.service;
 import com.example.restapi.object.Company;
 import com.example.restapi.object.Employee;
 import com.example.restapi.repository.CompanyRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -23,21 +26,15 @@ public class CompanyServiceTest {
     @Mock
     CompanyRepository companyRepository;
 
+    @Mock
+    EmployeeService employeeService;
+
     @InjectMocks
     CompanyService companyService;
 
-    @Test
-    void should_when_addEmployee_given_company_id_and_employee() {
-        //given
-        List<Company> companies = createCompanies();
-        Integer companyId = companies.get(0).getId();
-        Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
-
-        //when
-        companyService.addEmployee(companyId, employee);
-
-        //then
-        verify(companyRepository).addEmployee(companyId, employee);
+    @BeforeEach
+    void cleanRepository(){
+        companyRepository.clearAll();
     }
 
     @Test
@@ -73,23 +70,6 @@ public class CompanyServiceTest {
         assertEquals(companies.get(0), actual);
     }
 
-    @Test
-    void should_return_employees_when_findEmployeesByCompanyId_given_id() {
-        //given
-        List<Company> companies = createCompanies();
-        Integer companyId = companies.get(1).getId();
-        List<Employee> employees = companies.get(1).getEmployees();
-
-        given(companyRepository.findEmployeesByCompanyId(companyId))
-                .willReturn(employees);
-
-        //when
-        List<Employee> actualList = companyService.findEmployeesByCompanyId(companyId);
-
-        //then
-        verify(companyRepository).findEmployeesByCompanyId(companyId);
-        assertEquals(employees, actualList);
-    }
 
     @Test
     void should_return_companies_when_findByPage_given_page_and_pageSize() {
@@ -113,7 +93,7 @@ public class CompanyServiceTest {
     @Test
     void should_company_when_create_company_given_company() {
         //given
-        Company company = new Company(1, "Coffee Shop", new ArrayList<>());
+        Company company = new Company(1, "Coffee Shop");
         given(companyRepository.create(company))
                 .willReturn(company);
 
@@ -129,7 +109,7 @@ public class CompanyServiceTest {
     void should_return_company_when_editCompany_given_id_and_company() {
         //given
         List<Company> companies = createCompanies();
-        Company updateCompany = new Company(1, "Coffee & Tea Shop", new ArrayList<>());
+        Company updateCompany = new Company(1, "Coffee & Tea Shop");
         Company company = companies.get(0);
         Integer companyId = updateCompany.getId();
 
@@ -165,10 +145,38 @@ public class CompanyServiceTest {
         verify(companyRepository).delete(companyId);
     }
 
+    
+    @Test
+    void should_return_employees_when_findEmployeesByCompanyId_given_companyId() {
+        //given
+        List<Company> companies = createCompanies();
+        Company company = companies.get(0);
+        Integer companyId = company.getId();
+        List<Employee> employees = Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000, companyId),
+                new Employee(2, "Jane Doe", 21, "female", 2000, companyId));
+
+
+        given(employeeService.findEmployeesByCompanyId(companyId))
+                .willReturn(employees);
+
+        //when
+        List<Employee> actual = companyService.findEmployeesByCompanyId(companyId);
+
+        //then
+        assertEquals(employees, actual);
+
+    }
+
     public List<Company> createCompanies() {
-        return Arrays.asList(new Company(1, "Coffee Shop", new ArrayList<>()),
-                new Company(2, "Tea Shop", Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000))),
-                new Company(3, "Bakery", new ArrayList<>()));
+
+        Company company1 = new Company(1, "Coffee Shop");
+        companyRepository.create(company1);
+        Company company2 = new Company(2, "Tea Shop");
+        companyRepository.create(company2);
+        Company company3 = new Company(3, "Bakery");
+        companyRepository.create(company3);
+
+        return Arrays.asList(company1, company2, company3);
     }
 
 }

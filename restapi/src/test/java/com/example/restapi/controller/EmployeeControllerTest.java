@@ -28,18 +28,18 @@ public class EmployeeControllerTest {
     MockMvc mockMvc;
 
     @Autowired
-    EmployeeService employeeService;
+    EmployeeRepository employeeRepository;
 
     @BeforeEach
     void cleanRepository(){
-        employeeService.clearAll();
+        employeeRepository.clearAll();
     }
 
     @Test
     void should_get_all_employees_when_perform_when_perform_get_given_employees() throws Exception {
         //given
-        Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
-        employeeService.create(employee);
+        Employee employee = new Employee(1, "John Doe", 20, "male", 1000, null);
+        employeeRepository.create(employee);
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.get("/employees"))
@@ -56,11 +56,11 @@ public class EmployeeControllerTest {
     void should_return_employee_when_perform_post_given_employee() throws Exception {
         //given
         String employee = "{\n" +
-            "        \"name\": \"John Doe\",\n" +
-            "        \"age\": 20,\n" +
-            "        \"gender\": \"male\",\n" +
-            "        \"salary\": 1000\n" +
-            "    }";
+                "        \"name\": \"John Doe\",\n" +
+                "        \"age\": 20,\n" +
+                "        \"gender\": \"male\",\n" +
+                "        \"salary\": 1000\n" +
+                "    }";
         //when
         //then
         mockMvc.perform(post("/employees")
@@ -73,11 +73,12 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath("$.salary").value(1000));
     }
 
+
     @Test
     void should_get_employee_when_perform_get_given_id() throws Exception {
         //given
-        Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
-        employeeService.create(employee);
+        Employee employee = new Employee(1, "John Doe", 20, "male", 1000, null);
+        employeeRepository.create(employee);
         //when
         mockMvc.perform(MockMvcRequestBuilders.get("/employees/" + employee.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -124,8 +125,8 @@ public class EmployeeControllerTest {
     @Test
     void should_return_employee_when_perform_put_given_updated_employee() throws Exception {
         //given
-        Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
-        employeeService.create(employee);
+        Employee employee = new Employee(1, "John Doe", 20, "male", 1000, null);
+        employeeRepository.create(employee);
         String updatedEmployee="{\n" +
                 "    \"age\": 23,\n" +
                 "    \"salary\": 123456\n" +
@@ -152,15 +153,15 @@ public class EmployeeControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         //then
-        assertEquals(2, employeeService.findAll().size());
+        assertEquals(2, employeeRepository.findAll().size());
     }
 
     private void createThreeEmployees() {
-        Employee employee1 = new Employee(1, "John Doe", 20, "male", 1000);
-        employeeService.create(employee1);
-        Employee employee2 = new Employee(2, "Jane Doe", 21, "female", 2000);
-        employeeService.create(employee2);
-        Employee employee3 = new Employee(3, "Doe Doe", 20, "male", 3000);
-        employeeService.create(employee3);
+        Employee employee1 = new Employee(1, "John Doe", 20, "male", 1000, null);
+        employeeRepository.create(employee1);
+        Employee employee2 = new Employee(2, "Jane Doe", 21, "female", 2000, null);
+        employeeRepository.create(employee2);
+        Employee employee3 = new Employee(3, "Doe Doe", 20, "male", 3000, null);
+        employeeRepository.create(employee3);
     }
 }

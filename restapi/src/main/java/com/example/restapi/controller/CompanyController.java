@@ -33,7 +33,7 @@ public class CompanyController {
 
     @GetMapping("/{id}/employees")
     public List<Employee> getEmployeesByID(@PathVariable Integer id) {
-        return companyRepository.findEmployeesByCompanyId(id);
+        return companyService.findEmployeesByCompanyId(id);
     }
 
     @GetMapping(params = {"page", "pageSize"})

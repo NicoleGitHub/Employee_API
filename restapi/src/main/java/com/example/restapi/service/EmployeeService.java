@@ -52,7 +52,7 @@ public class EmployeeService {
         employeeRepository.delete(id);
     }
 
-    public void clearAll() {
-        employeeRepository.clearAll();
+    public List<Employee> findEmployeesByCompanyId(Integer id){
+        return employeeRepository.findEmployeesByCompanyId(id);
     }
 }

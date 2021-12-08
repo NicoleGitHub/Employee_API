@@ -1,6 +1,7 @@
 package com.example.restapi.controller;
 
 import com.example.restapi.object.Employee;
+import com.example.restapi.repository.EmployeeRepository;
 import com.example.restapi.service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +14,16 @@ public class EmployeeController {
 
     EmployeeService employeeService;
 
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, EmployeeRepository employeeRepository) {
         this.employeeService = employeeService;
+        this.employeeRepository = employeeRepository;
     }
+
+    EmployeeRepository employeeRepository;
+//
+//    public EmployeeController(EmployeeService employeeService) {
+//        this.employeeService = employeeService;
+//    }
 
     @GetMapping
     public List<Employee> getAllEmployees() {

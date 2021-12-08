@@ -12,8 +12,11 @@ public class CompanyService {
 
     private CompanyRepository companyRepository;
 
-    public void addEmployee(Integer id, Employee employee) {
-        companyRepository.addEmployee(id, employee);
+    private EmployeeService employeeService;
+
+    public CompanyService(CompanyRepository companyRepository, EmployeeService employeeService) {
+        this.companyRepository = companyRepository;
+        this.employeeService = employeeService;
     }
 
     public List<Company> findAll() {
@@ -25,7 +28,7 @@ public class CompanyService {
     }
 
     public List<Employee> findEmployeesByCompanyId(Integer companyId) {
-        return companyRepository.findEmployeesByCompanyId(companyId);
+        return employeeService.findEmployeesByCompanyId(companyId);
     }
 
     public List<Company> findByPage(Integer page, Integer pageSize) {
@@ -46,7 +49,7 @@ public class CompanyService {
         return companyRepository.save(id, company);
     }
 
-    public void delete(Integer companyId) {
-
+    public void delete(Integer id) {
+        companyRepository.delete(id);
     }
 }
