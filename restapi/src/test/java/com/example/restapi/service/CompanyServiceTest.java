@@ -27,11 +27,26 @@ public class CompanyServiceTest {
     CompanyService companyService;
 
     @Test
+    void should_when_addEmployee_given_company_id_and_employee() {
+        //given
+        List<Company> companies = createCompanies();
+        Integer companyId = companies.get(0).getId();
+        Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
+
+        //when
+        companyService.addEmployee(companyId, employee);
+
+        //then
+        verify(companyRepository).addEmployee(companyId, employee);
+    }
+
+    @Test
     void should_return_employees_when_findAll_given() {
         //given
         List<Company> companies = createCompanies();
         given(companyRepository.findAll())
                 .willReturn(companies);
+
         //when
         List<Company> actual = companyService.findAll();
 
@@ -44,34 +59,38 @@ public class CompanyServiceTest {
     void should_return_employees_when_findById_given_id() {
         //given
         List<Company> companies = createCompanies();
-        given(companyRepository.findById(companies.get(0).getId()))
+        Integer companyId = companies.get(0).getId();
+        given(companyRepository.findById(companyId))
                 .willReturn(companies.get(0));
+
         //when
-        Company actual = companyService.findById(companies.get(0).getId());
+        Company actual = companyService.findById(companyId);
 
         //then
-        verify(companyRepository).findById(companies.get(0).getId());
+        verify(companyRepository).findById(companyId);
         assertEquals(companies.get(0), actual);
     }
 
     @Test
-    void should_when_addEmployee_given_company_id_and_employee() {
+    void should_return_employees_when_findEmployeesByCompanyId_given_id() {
         //given
         List<Company> companies = createCompanies();
-        Integer companyId = companies.get(0).getId();
-        Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
-        given(companyRepository.findById(companyId))
-                .willReturn(companies.get(0));
+        Integer companyId = companies.get(1).getId();
+        List<Employee> employees = companies.get(1).getEmployees();
+        given(companyRepository.findEmployeesByCompanyId(companyId))
+                .willReturn(employees);
+
         //when
-        companyService.addEmployee(companyId, employee);
+        List<Employee> actualList = companyService.findEmployeesByCompanyId(companyId);
 
         //then
-        verify(companyRepository).addEmployee(companyId, employee);
+        verify(companyRepository).findEmployeesByCompanyId(companyId);
+        assertEquals(employees, actualList);
     }
 
     public List<Company> createCompanies() {
         return Arrays.asList(new Company(1, "Coffee Shop", new ArrayList<>()),
-                new Company(2, "Tea Shop", new ArrayList<>()),
+                new Company(2, "Tea Shop", Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000))),
                 new Company(3, "Bakery", new ArrayList<>()));
     }
 
