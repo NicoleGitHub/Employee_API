@@ -1,17 +1,21 @@
 package com.example.restapi.object;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Company {
     private Integer id;
     private String companyName;
-    private List<Employee> employees = new ArrayList<>();
+    private List<Employee> employees;
 
     public Company(Integer id, String companyName, List<Employee> employees) {
         this.id = id;
         this.companyName = companyName;
         this.employees = employees;
+    }
+
+    public Company(int id, String companyName) {
+        this.id = id;
+        this.companyName = companyName;
     }
 
     public Integer getId() {
@@ -33,9 +37,4 @@ public class Company {
     public List<Employee> getEmployees() {
         return employees;
     }
-
-    public void setEmployees(List<Employee> employees) {
-        this.employees = employees;
-    }
-
 }

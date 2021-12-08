@@ -4,7 +4,6 @@ import com.example.restapi.object.Company;
 import com.example.restapi.object.Employee;
 import com.example.restapi.repository.CompanyRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,7 +30,7 @@ public class CompanyController {
 
     @GetMapping("/{id}/employees")
     public List<Employee> getEmployeesByID(@PathVariable Integer id) {
-        return companyRepository.getEmployeesById(id);
+        return companyRepository.getEmployeesByCompanyId(id);
     }
 
     @GetMapping(params = {"page", "pageSize"})
@@ -39,19 +38,21 @@ public class CompanyController {
         return companyRepository.findByPage(page, pageSize);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ResponseEntity addCompany(@RequestBody Company company) {
-        return new ResponseEntity<>(companyRepository.create(company), HttpStatus.CREATED);
+    public Company addCompany(@RequestBody Company company) {
+        return companyRepository.create(company);
     }
 
     @PutMapping("/{id}")
     public Company updateCompany(@PathVariable Integer id, @RequestBody Company updatedCompany) {
-        return companyRepository.save(id, updatedCompany);
+        return companyRepository.editCompany(id, updatedCompany);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteEmployee(@PathVariable Integer id) {
-        return new ResponseEntity<>(companyRepository.delete(id), HttpStatus.NO_CONTENT);
+    public Company deleteEmployee(@PathVariable Integer id) {
+        return companyRepository.delete(id);
     }
 
 }

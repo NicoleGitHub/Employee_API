@@ -38,18 +38,20 @@ public class EmployeeController {
         return employeeRepository.findByPage(page, pageSize);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public ResponseEntity addEmployee(@RequestBody Employee employee) {
-        return new ResponseEntity<>(employeeRepository.create(employee), HttpStatus.CREATED);
+    public Employee addEmployee(@RequestBody Employee employee) {
+        return employeeRepository.create(employee);
     }
 
     @PutMapping("/{id}")
     public Employee editEmployee(@PathVariable Integer id, @RequestBody Employee updatedEmployee) {
-        return employeeRepository.save(id, updatedEmployee);
+        return employeeRepository.editEmployee(id, updatedEmployee);
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteEmployee(@PathVariable Integer id) {
-        return new ResponseEntity<>(employeeRepository.delete(id), HttpStatus.NO_CONTENT);
+    public Employee deleteEmployee(@PathVariable Integer id) {
+        return employeeRepository.delete(id);
     }
 }

@@ -38,6 +38,19 @@ public class EmployeeRepository {
                 .collect(Collectors.toList());
     }
 
+    public Employee editEmployee(Integer id, Employee updatedEmployee) {
+        Employee employee = getById(id);
+
+        if(updatedEmployee.getAge() != null) {
+            employee.setAge(updatedEmployee.getAge());
+        }
+        if(updatedEmployee.getSalary() != null) {
+            employee.setSalary(updatedEmployee.getSalary());
+        }
+
+        return save(id, employee);
+    }
+
     public Employee save(Integer id, Employee updatedEmployee) {
         Employee employee = getById(id);
         employees.remove(employee);
@@ -61,8 +74,7 @@ public class EmployeeRepository {
 
     public Employee delete(Integer id) {
         Employee employee = getById(id);
-        Employee deletedEmployee = employee;
         employees.remove(employee);
-        return deletedEmployee;
+        return employee;
     }
 }
