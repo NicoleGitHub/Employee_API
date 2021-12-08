@@ -1,10 +1,8 @@
 package com.example.restapi.controller;
 
 import com.example.restapi.object.Employee;
-import com.example.restapi.repository.EmployeeRepository;
 import com.example.restapi.service.EmployeeService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

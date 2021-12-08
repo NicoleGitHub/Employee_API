@@ -16,16 +16,15 @@ public class EmployeeService {
     }
 
     public List<Employee> findAll() {
-        return employeeRepository.getAll();
+        return employeeRepository.findAll();
     }
 
     public Employee getById(Integer id) {
-        return employeeRepository.getById(id);
+        return employeeRepository.findById(id);
     }
 
     public List<Employee> getByGender(String gender) {
-        System.out.println("here" + employeeRepository.getByGender(gender));
-        return employeeRepository.getByGender(gender);
+        return employeeRepository.findByGender(gender);
     }
 
     public List<Employee> findByPage(Integer page, Integer pageSize) {
@@ -55,5 +54,9 @@ public class EmployeeService {
 
     public void delete(Integer id) {
         employeeRepository.delete(id);
+    }
+
+    public void clearAll() {
+        employeeRepository.clearAll();
     }
 }

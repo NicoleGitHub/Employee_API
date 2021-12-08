@@ -2,8 +2,7 @@ package com.example.restapi.controller;
 
 import com.example.restapi.object.Employee;
 import com.example.restapi.repository.EmployeeRepository;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.restapi.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import static com.jayway.jsonpath.internal.function.ParamType.JSON;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -30,20 +28,18 @@ public class EmployeeControllerTest {
     MockMvc mockMvc;
 
     @Autowired
-    EmployeeRepository employeeRepository;
-
-    ObjectMapper mapper = new ObjectMapper();
+    EmployeeService employeeService;
 
     @BeforeEach
     void cleanRepository(){
-        employeeRepository.clearAll();
+        employeeService.clearAll();
     }
 
     @Test
     void should_get_all_employees_when_perform_when_perform_get_given_employees() throws Exception {
         //given
         Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
-        employeeRepository.create(employee);
+        employeeService.create(employee);
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.get("/employees"))
@@ -81,7 +77,7 @@ public class EmployeeControllerTest {
     void should_get_employee_when_perform_get_given_id() throws Exception {
         //given
         Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
-        employeeRepository.create(employee);
+        employeeService.create(employee);
         //when
         mockMvc.perform(MockMvcRequestBuilders.get("/employees/" + employee.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
@@ -129,7 +125,7 @@ public class EmployeeControllerTest {
     void should_return_employee_when_perform_put_given_updated_employee() throws Exception {
         //given
         Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
-        employeeRepository.create(employee);
+        employeeService.create(employee);
         String updatedEmployee="{\n" +
                 "    \"age\": 23,\n" +
                 "    \"salary\": 123456\n" +
@@ -156,15 +152,15 @@ public class EmployeeControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         //then
-        assertEquals(2, employeeRepository.getAll().size());
+        assertEquals(2, employeeService.findAll().size());
     }
 
     private void createThreeEmployees() {
         Employee employee1 = new Employee(1, "John Doe", 20, "male", 1000);
-        employeeRepository.create(employee1);
+        employeeService.create(employee1);
         Employee employee2 = new Employee(2, "Jane Doe", 21, "female", 2000);
-        employeeRepository.create(employee2);
+        employeeService.create(employee2);
         Employee employee3 = new Employee(3, "Doe Doe", 20, "male", 3000);
-        employeeRepository.create(employee3);
+        employeeService.create(employee3);
     }
 }

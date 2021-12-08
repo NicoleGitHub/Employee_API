@@ -25,7 +25,7 @@ public class CompanyRepository {
     }
 
     public void addEmployee(Integer id, Employee employee) {
-        Company company = getById(id);
+        Company company = findById(id);
         Integer nextId = company.getEmployees().stream()
                 .mapToInt(Employee::getId)
                 .max()
@@ -34,19 +34,19 @@ public class CompanyRepository {
         company.getEmployees().add(employee);
     }
 
-    public List<Company> getAll() {
+    public List<Company> findAll() {
         return companies;
     }
 
-    public Company getById(Integer id) {
+    public Company findById(Integer id) {
         return companies.stream()
                 .filter(company -> company.getId().equals(id))
                 .findFirst()
                 .orElseThrow(NoCompaniesFoundException::new);
     }
 
-    public List<Employee> getEmployeesByCompanyId(Integer id) {
-        return getById(id).getEmployees();
+    public List<Employee> findEmployeesByCompanyId(Integer id) {
+        return findById(id).getEmployees();
     }
 
     public List<Company> findByPage(Integer page, Integer pageSize) {
@@ -64,7 +64,7 @@ public class CompanyRepository {
     }
 
     public Company editCompany(Integer id, Company updatedCompany) {
-        Company company = getById(id);
+        Company company = findById(id);
 
         if(updatedCompany.getCompanyName() != null) {
             company.setCompanyName(updatedCompany.getCompanyName());
@@ -74,7 +74,7 @@ public class CompanyRepository {
     }
 
     public Company save(Integer id, Company updatedCompany) {
-        Company company = getById(id);
+        Company company = findById(id);
         if(updatedCompany.getCompanyName().isEmpty()) {
             company.setCompanyName(updatedCompany.getCompanyName());
         }
@@ -82,6 +82,10 @@ public class CompanyRepository {
     }
 
     public void delete(Integer id) {
-        companies.remove(getById(id));
+        companies.remove(findById(id));
+    }
+
+    public void clearAll() {
+        companies.clear();
     }
 }

@@ -13,11 +13,6 @@ public class Company {
         this.employees = employees;
     }
 
-    public Company(int id, String companyName) {
-        this.id = id;
-        this.companyName = companyName;
-    }
-
     public Integer getId() {
         return id;
     }

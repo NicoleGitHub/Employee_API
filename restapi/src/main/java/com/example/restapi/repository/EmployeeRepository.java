@@ -21,18 +21,18 @@ public class EmployeeRepository {
         employees.add(new Employee(6, "name six", 600, "female", 60000000));
     }
 
-    public List<Employee> getAll() {
+    public List<Employee> findAll() {
         return employees;
     }
 
-    public Employee getById(Integer id){
+    public Employee findById(Integer id){
         return employees.stream()
                 .filter(employee -> employee.getId().equals(id))
                 .findFirst()
                 .orElseThrow(NoEmployeesFoundException::new);
     }
 
-    public List<Employee> getByGender(String gender) {
+    public List<Employee> findByGender(String gender) {
         System.out.println("HERE" + employees.stream()
                 .filter(employee -> employee.getGender().equals(gender))
                 .collect(Collectors.toList()).toString());
@@ -42,7 +42,7 @@ public class EmployeeRepository {
     }
 
     public Employee save(Integer id, Employee updatedEmployee) {
-        Employee employee = getById(id);
+        Employee employee = findById(id);
         employees.remove(employee);
         employees.add(updatedEmployee);
         return updatedEmployee;
@@ -63,11 +63,11 @@ public class EmployeeRepository {
     }
 
     public void delete(Integer id) {
-        employees.remove(getById(id));
+        employees.remove(findById(id));
     }
 
     public void clearAll() {
-        this.employees.clear();
+        employees.clear();
     }
 
 }
