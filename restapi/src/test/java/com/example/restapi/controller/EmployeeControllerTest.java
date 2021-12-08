@@ -1,4 +1,4 @@
-package com.example.restapi;
+package com.example.restapi.controller;
 
 import com.example.restapi.object.Employee;
 import com.example.restapi.repository.EmployeeRepository;
@@ -46,7 +46,6 @@ public class EmployeeControllerTest {
         employeeRepository.create(employee);
         //when
         //then
-//        System.out.println("here" + mockMvc.perform(MockMvcRequestBuilders.get("/employees")).andReturn().getResponse().getContentAsString());
         mockMvc.perform(MockMvcRequestBuilders.get("/employees"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -55,8 +54,6 @@ public class EmployeeControllerTest {
                 .andExpect(jsonPath("$[0].age").value(20))
                 .andExpect(jsonPath("$[0].gender").value("male"))
                 .andExpect(jsonPath("$[0].salary").value(1000));
-//        assertEquals(mapper.readTree(mockMvc.perform(MockMvcRequestBuilders.get("/employees")).andReturn().getResponse().getContentAsString()), mapper.readTree((employee) {
-//        }));
     }
 
     @Test
@@ -170,6 +167,4 @@ public class EmployeeControllerTest {
         Employee employee3 = new Employee(3, "Doe Doe", 20, "male", 3000);
         employeeRepository.create(employee3);
     }
-
-
 }
