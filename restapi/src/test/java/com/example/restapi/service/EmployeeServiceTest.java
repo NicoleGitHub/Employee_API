@@ -44,7 +44,7 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    void should_return_employee_when_edit_employee_given_updated_employee() {
+    void should_return_employee_when_edit_employees_given_updated_employee() {
         //given
         Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
         Employee updatedEmployee = new Employee(1, "John Doe", 25, "male", 2000);
@@ -63,12 +63,12 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    void should_return_employees_when_get_employee_given_gender_male() {
+    void should_return_employees_when_get_by_gender_given_gender_male() {
         //given
         String gender = "male";
-        List<Employee> employees = Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000),
-                new Employee(2, "Jane Doe", 21, "female", 2000));
-        List<Employee> employeesWithMale = Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000));
+        createThreeEmployees();
+        List<Employee> employeesWithMale = Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000),
+                                                        new Employee(3, "Doe Doe", 20, "male", 3000));
         given(employeeRepository.getByGender(gender))
                 .willReturn(employeesWithMale);
 
@@ -78,6 +78,32 @@ public class EmployeeServiceTest {
         //then
         assertEquals(employeesWithMale, actualList);
     }
-    
+
+    @Test
+    void should_return_employees_when_get_by_page_employees_given_page_and_pageSize() {
+        //given
+        Integer page = 1;
+        Integer pageSize = 2;
+        createThreeEmployees();
+        List<Employee> employeesOnPage = Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000),
+                new Employee(3, "Doe Doe", 20, "male", 3000));
+        given(employeeRepository.findByPage(page, pageSize))
+                .willReturn(employeesOnPage);
+
+        //when
+        List<Employee> actualList = employeeService.findByPage(page, pageSize);
+
+        //then
+        assertEquals(employeesOnPage, actualList);
+    }
+
+    private void createThreeEmployees() {
+        Employee employee1 = new Employee(1, "John Doe", 20, "male", 1000);
+        employeeRepository.create(employee1);
+        Employee employee2 = new Employee(2, "Jane Doe", 21, "female", 2000);
+        employeeRepository.create(employee2);
+        Employee employee3 = new Employee(3, "Doe Doe", 20, "male", 3000);
+        employeeRepository.create(employee3);
+    }
 
 }
