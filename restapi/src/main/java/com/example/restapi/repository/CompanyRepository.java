@@ -81,10 +81,7 @@ public class CompanyRepository {
         return company;
     }
 
-    public Company delete(Integer id) {
-        Company company = getById(id);
-        Company deletedCompany = company;
-        companies.remove(company);
-        return deletedCompany;
+    public void delete(Integer id) {
+        companies.remove(getById(id));
     }
 }

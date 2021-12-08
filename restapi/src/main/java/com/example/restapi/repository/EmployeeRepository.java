@@ -72,13 +72,12 @@ public class EmployeeRepository {
         return employee;
     }
 
-    public Employee delete(Integer id) {
-        Employee employee = getById(id);
-        employees.remove(employee);
-        return employee;
+    public void delete(Integer id) {
+        employees.remove(getById(id));
     }
 
     public void clearAll() {
         this.employees.clear();
     }
+
 }
