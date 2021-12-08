@@ -77,4 +77,8 @@ public class EmployeeRepository {
         employees.remove(employee);
         return employee;
     }
+
+    public void clearAll() {
+        this.employees.clear();
+    }
 }
