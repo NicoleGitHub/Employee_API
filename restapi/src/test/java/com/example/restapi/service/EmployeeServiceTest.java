@@ -11,11 +11,14 @@ import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
 public class EmployeeServiceTest {
@@ -55,7 +58,22 @@ public class EmployeeServiceTest {
         Employee actual = employeeService.edit(employee.getId(), updatedEmployee);
 
         //then
+        verify(employeeRepository).save(employee.getId(), employee);
         assertEquals(employee, actual);
+    }
+
+    @Test
+    void should_return_employees_when_get_employee_given_gender_male() {
+        //given
+        List<Employee> employees = Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000),
+                new Employee(2, "Jane Doe", 21, "female", 2000));
+
+        List<Employee> employeesWithoutMale = employees.stream().filter(employee -> employee.getGender().equals("male")).collect(Collectors.toList());
+        //when
+        List<Employee> actualList = employeeService.getByGender("male");
+
+        //then
+        assertEquals(employeesWithoutMale, actualList);
     }
 
 }

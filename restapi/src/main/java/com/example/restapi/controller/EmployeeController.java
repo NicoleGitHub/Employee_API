@@ -2,6 +2,7 @@ package com.example.restapi.controller;
 
 import com.example.restapi.object.Employee;
 import com.example.restapi.repository.EmployeeRepository;
+import com.example.restapi.service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,46 +13,47 @@ import java.util.List;
 @RequestMapping("/employees")
 public class EmployeeController {
 
-    EmployeeRepository employeeRepository;
+    EmployeeService employeeService;
 
-    public EmployeeController(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
     @GetMapping
     public List<Employee> getAllEmployees() {
-        return employeeRepository.getAll();
+        return employeeService.findAll();
     }
 
     @GetMapping("/{id}")
     public Employee getEmployeesByID(@PathVariable Integer id) {
-        return employeeRepository.getById(id);
+        return employeeService.getById(id);
     }
 
     @GetMapping(params = {"gender"})
     public List<Employee> getEmployeesByGender(@RequestParam String gender) {
-        return employeeRepository.getByGender(gender);
+        return employeeService.getByGender(gender);
     }
 
     @GetMapping(params = {"page", "pageSize"})
     public List<Employee> getEmployeeByPage(@RequestParam Integer page, @RequestParam Integer pageSize) {
-        return employeeRepository.findByPage(page, pageSize);
+        return employeeService.findByPage(page, pageSize);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Employee addEmployee(@RequestBody Employee employee) {
-        return employeeRepository.create(employee);
+        return employeeService.create(employee);
     }
 
     @PutMapping("/{id}")
     public Employee editEmployee(@PathVariable Integer id, @RequestBody Employee updatedEmployee) {
-        return employeeRepository.editEmployee(id, updatedEmployee);
+        return employeeService.edit(id, updatedEmployee) ;
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
     public void deleteEmployee(@PathVariable Integer id) {
-        employeeRepository.delete(id);
+
+        employeeService.delete(id);
     }
 }
