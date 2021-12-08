@@ -63,22 +63,12 @@ public class CompanyRepository {
         return company;
     }
 
-    public Company editCompany(Integer id, Company updatedCompany) {
-        Company company = findById(id);
-
-        if(updatedCompany.getCompanyName() != null) {
-            company.setCompanyName(updatedCompany.getCompanyName());
-        }
-
-        return save(id, company);
-    }
-
     public Company save(Integer id, Company updatedCompany) {
         Company company = findById(id);
         if(updatedCompany.getCompanyName().isEmpty()) {
             company.setCompanyName(updatedCompany.getCompanyName());
         }
-        return company;
+        return updatedCompany;
     }
 
     public void delete(Integer id) {

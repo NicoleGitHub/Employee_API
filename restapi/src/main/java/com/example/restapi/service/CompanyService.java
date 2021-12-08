@@ -35,4 +35,14 @@ public class CompanyService {
     public Company create(Company company) {
         return companyRepository.create(company);
     }
+
+    public Company editCompany(Integer id, Company updatedCompany) {
+        Company company = findById(id);
+
+        if(updatedCompany.getCompanyName() != null) {
+            company.setCompanyName(updatedCompany.getCompanyName());
+        }
+
+        return companyRepository.save(id, company);
+    }
 }

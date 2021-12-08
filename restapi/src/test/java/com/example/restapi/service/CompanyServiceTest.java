@@ -125,6 +125,26 @@ public class CompanyServiceTest {
         assertEquals(company, actual);
     }
 
+    @Test
+    void should_return_company_when_editCompany_given_id_and_company() {
+        //given
+        List<Company> companies = createCompanies();
+        Company updateCompany = new Company(1, "Coffee & Tea Shop", new ArrayList<>());
+        Company company = companies.get(0);
+        Integer companyId = updateCompany.getId();
+        given(companyService.findById(companyId))
+                .willReturn(company);
+        company.setCompanyName(updateCompany.getCompanyName());
+        given(companyRepository.save(companyId, company))
+                .willReturn(updateCompany);
+
+        //when
+        Company actual = companyService.editCompany(companyId, updateCompany);
+
+        //then
+        assertEquals(updateCompany, actual);
+    }
+
     public List<Company> createCompanies() {
         return Arrays.asList(new Company(1, "Coffee Shop", new ArrayList<>()),
                 new Company(2, "Tea Shop", Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000))),

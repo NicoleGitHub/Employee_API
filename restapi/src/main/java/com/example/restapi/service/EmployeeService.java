@@ -41,11 +41,7 @@ public class EmployeeService {
             employee.setSalary(updatedEmployee.getSalary());
         }
 
-        return save(id, employee);
-    }
-
-    public Employee save(Integer id, Employee updatedEmployee) {
-        return employeeRepository.save(id, updatedEmployee);
+        return employeeRepository.save(id, employee);
     }
 
     public Employee create(Employee employee) {

@@ -3,6 +3,7 @@ package com.example.restapi.controller;
 import com.example.restapi.object.Company;
 import com.example.restapi.object.Employee;
 import com.example.restapi.repository.CompanyRepository;
+import com.example.restapi.service.CompanyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +14,11 @@ import java.util.List;
 public class CompanyController {
 
     CompanyRepository companyRepository;
+    CompanyService companyService;
 
-    public CompanyController(CompanyRepository companyRepository) {
+    public CompanyController(CompanyRepository companyRepository, CompanyService companyService) {
         this.companyRepository = companyRepository;
+        this.companyService = companyService;
     }
 
     @GetMapping
@@ -46,7 +49,7 @@ public class CompanyController {
 
     @PutMapping("/{id}")
     public Company updateCompany(@PathVariable Integer id, @RequestBody Company updatedCompany) {
-        return companyRepository.editCompany(id, updatedCompany);
+        return companyService.editCompany(id, updatedCompany);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

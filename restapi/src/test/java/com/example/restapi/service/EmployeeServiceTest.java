@@ -61,21 +61,6 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    void should_return_employee_when_save_page_employee() {
-        //given
-        Employee employee = new Employee(1, "John Doe", 20, "male", 1000);
-        given(employeeRepository.save(employee.getId(), employee))
-                .willReturn(employee);
-
-        //when
-        Employee actual = employeeService.save(employee.getId(), employee);
-
-        //then
-        verify(employeeRepository).save(employee.getId(), employee);
-        assertEquals(employee, actual);
-    }
-
-    @Test
     void should_return_employees_when_get_by_gender_given_gender_male() {
         //given
         String gender = "male";
