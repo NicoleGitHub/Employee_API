@@ -103,7 +103,7 @@ public class CompanyServiceTest {
                 .willReturn(companiesOnPage);
 
         //when
-        List<Employee> actualList = companyService.findByPage(page, pageSize);
+        List<Company> actualList = companyService.findByPage(page, pageSize);
 
         //then
         verify(companyRepository).findByPage(page, pageSize);

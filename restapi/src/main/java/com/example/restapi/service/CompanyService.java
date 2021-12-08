@@ -28,7 +28,7 @@ public class CompanyService {
         return companyRepository.findEmployeesByCompanyId(companyId);
     }
 
-    public List<Employee> findByPage(Integer page, Integer pageSize) {
-        return null;
+    public List<Company> findByPage(Integer page, Integer pageSize) {
+        return companyRepository.findByPage(page, pageSize);
     }
 }
