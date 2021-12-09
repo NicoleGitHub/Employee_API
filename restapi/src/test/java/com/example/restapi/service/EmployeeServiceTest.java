@@ -1,6 +1,6 @@
 package com.example.restapi.service;
 
-import com.example.restapi.object.Employee;
+import com.example.restapi.object.entity.Employee;
 import com.example.restapi.repository.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
@@ -36,7 +37,7 @@ public class EmployeeServiceTest {
     void should_return_all_employees_when_find_all_given() {
         //given
         List<Employee> employees = new ArrayList<>();
-        employees.add(new Employee(1, "John Doe", 20, "male", 1000, null));
+        employees.add(new Employee("John Doe", 20, "male", 1000));
         given(employeeRepository.findAll())
                 .willReturn(employees);
         //when
@@ -45,13 +46,15 @@ public class EmployeeServiceTest {
         //then
         verify(employeeRepository).findAll();
         assertEquals(employees, actual);
+        assertEquals(employees.size(), actual.size());
+        assertEquals(employees.get(0), actual.get(0));
     }
 
     @Test
     void should_return_employee_when_edit_employees_given_updated_employee() {
         //given
-        Employee employee = new Employee(1, "John Doe", 20, "male", 1000, null);
-        Employee updatedEmployee = new Employee(1, "John Doe", 25, "male", 2000, null);
+        Employee employee = new Employee("John Doe", 20, "male", 1000);
+        Employee updatedEmployee = new Employee("John Doe", 25, "male", 2000);
         given(employeeRepository.findById(any()))
                 .willReturn(employee);
         employee.setAge(updatedEmployee.getAge());
@@ -64,6 +67,7 @@ public class EmployeeServiceTest {
         //then
         verify(employeeRepository).save(employee.getId(), employee);
         assertEquals(employee, actual);
+        //#TODO
     }
 
     @Test
@@ -71,17 +75,18 @@ public class EmployeeServiceTest {
         //given
         String gender = "male";
         createThreeEmployees();
-        List<Employee> employeesWithMale = Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000, null),
-                                                        new Employee(3, "Doe Doe", 20, "male", 3000, null));
+        List<Employee> expected = Arrays.asList(new Employee("John Doe", 20, "male", 1000),
+                                                        new Employee("Doe Doe", 20, "male", 3000));
         given(employeeRepository.findByGender(gender))
-                .willReturn(employeesWithMale);
+                .willReturn(expected);
 
         //when
         List<Employee> actualList = employeeService.getByGender(gender);
 
         //then
         verify(employeeRepository).findByGender(gender);
-        assertEquals(employeesWithMale, actualList);
+        assertEquals(expected, actualList);
+        //#TODO
     }
 
     @Test
@@ -90,8 +95,8 @@ public class EmployeeServiceTest {
         Integer page = 1;
         Integer pageSize = 2;
         createThreeEmployees();
-        List<Employee> employeesOnPage = Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000, null),
-                new Employee(3, "Doe Doe", 20, "male", 3000, null));
+        List<Employee> employeesOnPage = Arrays.asList(new Employee("John Doe", 20, "male", 1000),
+                new Employee("Doe Doe", 20, "male", 3000));
         given(employeeRepository.findByPage(page, pageSize))
                 .willReturn(employeesOnPage);
 
@@ -106,7 +111,7 @@ public class EmployeeServiceTest {
     @Test
     void should_return_employee_when_create_employee_given_employee() {
         //given
-        Employee employee = new Employee(1, "John Doe", 20, "male", 1000, null);
+        Employee employee = new Employee("John Doe", 20, "male", 1000);
 
         given(employeeRepository.create(employee))
                 .willReturn(employee);
@@ -122,8 +127,8 @@ public class EmployeeServiceTest {
     @Test
     void should_return_nothing_when_delete_employee_given_id() {
         //given
-        Employee employee = new Employee(1, "John Doe", 20, "male", 1000, null);
-
+        Employee employee = new Employee("John Doe", 20, "male", 1000);
+        willDoNothing().given(employeeRepository).delete(employee.getId());
         //when
         employeeService.delete(employee.getId());
 
@@ -132,11 +137,11 @@ public class EmployeeServiceTest {
     }
 
     private void createThreeEmployees() {
-        Employee employee1 = new Employee(1, "John Doe", 20, "male", 1000, null);
+        Employee employee1 = new Employee("John Doe", 20, "male", 1000);
         employeeRepository.create(employee1);
-        Employee employee2 = new Employee(2, "Jane Doe", 21, "female", 2000, null);
+        Employee employee2 = new Employee("Jane Doe", 21, "female", 2000);
         employeeRepository.create(employee2);
-        Employee employee3 = new Employee(3, "Doe Doe", 20, "male", 3000, null);
+        Employee employee3 = new Employee("Doe Doe", 20, "male", 3000);
         employeeRepository.create(employee3);
     }
 

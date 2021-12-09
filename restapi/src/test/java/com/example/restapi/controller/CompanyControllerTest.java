@@ -1,7 +1,7 @@
 package com.example.restapi.controller;
 
-import com.example.restapi.object.Company;
-import com.example.restapi.object.Employee;
+import com.example.restapi.object.entity.Company;
+import com.example.restapi.object.entity.Employee;
 import com.example.restapi.repository.CompanyRepository;
 import com.example.restapi.repository.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +31,7 @@ public class CompanyControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    //#TODO change to service
     @Autowired
     CompanyRepository companyRepository;
 
@@ -46,7 +47,7 @@ public class CompanyControllerTest {
     @Test
     void should_get_all_companies_when_perform_findAll_given() throws Exception {
         //given
-        Company company = new Company(1, "a");
+        Company company = new Company("1", "a");
         companyRepository.create(company);
 
         //when
@@ -79,7 +80,7 @@ public class CompanyControllerTest {
     @Test
     void should_get_employee_when_perform_get_given_id() throws Exception {
         //given
-        Company company = new Company(1, "a");
+        Company company = new Company("1", "a");
         companyRepository.create(company);
         //when
         //then
@@ -120,9 +121,9 @@ public class CompanyControllerTest {
         //given
         createCompanies();
         Integer CompanyId = 1;
-        Employee employee1 = new Employee(1, "John Doe", 20, "male", 1000, CompanyId);
+        Employee employee1 = new Employee( "John Doe", 20, "male", 1000);
         employeeRepository.create(employee1);
-        Employee employee2 = new Employee(2, "Jane Doe", 21, "female", 2000, CompanyId);
+        Employee employee2 = new Employee( "Jane Doe", 21, "female", 2000);
         employeeRepository.create(employee2);
         
         //when
@@ -156,7 +157,7 @@ public class CompanyControllerTest {
     void should_return_employee_when_perform_put_given_updated_employee() throws Exception {
         //given
         //given
-        Company company = new Company(1, "a");
+        Company company = new Company("1", "a");
         companyRepository.create(company);
         String updatedCompany = "    {\n" +
                 "        \"id\": 1,\n" +
@@ -186,11 +187,11 @@ public class CompanyControllerTest {
 
     public List<Company> createCompanies() {
 
-        Company company1 = new Company(1, "Coffee Shop");
+        Company company1 = new Company("1", "Coffee Shop");
         companyRepository.create(company1);
-        Company company2 = new Company(2, "Tea Shop");
+        Company company2 = new Company("2", "Tea Shop");
         companyRepository.create(company2);
-        Company company3 = new Company(3, "Bakery");
+        Company company3 = new Company("3", "Bakery");
         companyRepository.create(company3);
 
         return Arrays.asList(company1, company2, company3);

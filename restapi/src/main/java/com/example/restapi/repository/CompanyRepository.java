@@ -1,7 +1,7 @@
 package com.example.restapi.repository;
 
 import com.example.restapi.exception.NoCompaniesFoundException;
-import com.example.restapi.object.Company;
+import com.example.restapi.object.entity.Company;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -13,16 +13,16 @@ public class CompanyRepository {
     private List<Company> companies = new ArrayList<>();
 
     public CompanyRepository() {
-        companies.add(new Company(1, "company one"));
-        companies.add(new Company(2, "company two"));
-        companies.add(new Company(3, "company three"));
+        companies.add(new Company("1", "company one"));
+        companies.add(new Company("2", "company two"));
+        companies.add(new Company("3", "company three"));
     }
 
     public List<Company> findAll() {
         return companies;
     }
 
-    public Company findById(Integer id) {
+    public Company findById(String id) {
         return companies.stream()
                 .filter(company -> company.getId().equals(id))
                 .findFirst()
@@ -34,16 +34,16 @@ public class CompanyRepository {
     }
 
     public Company create(Company company) {
-        Integer nextId = companies.stream()
-                .mapToInt(Company::getId)
-                .max()
-                .orElse(0)+1;
-        company.setId(nextId);
+//        Integer nextId = companies.stream()
+//                .mapToInt(Company::getId)
+//                .max()
+//                .orElse(0)+1;
+        company.setId(String.valueOf(companies.size()+1));
         companies.add(company);
         return company;
     }
 
-    public Company save(Integer id, Company updatedCompany) {
+    public Company save(String id, Company updatedCompany) {
         Company company = findById(id);
         if(updatedCompany.getCompanyName().isEmpty()) {
             company.setCompanyName(updatedCompany.getCompanyName());
@@ -51,7 +51,7 @@ public class CompanyRepository {
         return updatedCompany;
     }
 
-    public void delete(Integer id) {
+    public void delete(String id) {
         companies.remove(findById(id));
     }
 

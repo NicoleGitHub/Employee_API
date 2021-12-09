@@ -1,8 +1,7 @@
 package com.example.restapi.controller;
 
-import com.example.restapi.object.Employee;
+import com.example.restapi.object.entity.Employee;
 import com.example.restapi.repository.EmployeeRepository;
-import com.example.restapi.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +26,7 @@ public class EmployeeControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    //#TODO change to service
     @Autowired
     EmployeeRepository employeeRepository;
 
@@ -38,7 +38,7 @@ public class EmployeeControllerTest {
     @Test
     void should_get_all_employees_when_perform_when_perform_get_given_employees() throws Exception {
         //given
-        Employee employee = new Employee(1, "John Doe", 20, "male", 1000, null);
+        Employee employee = new Employee("John Doe", 20, "male", 1000);
         employeeRepository.create(employee);
         //when
         //then
@@ -77,7 +77,7 @@ public class EmployeeControllerTest {
     @Test
     void should_get_employee_when_perform_get_given_id() throws Exception {
         //given
-        Employee employee = new Employee(1, "John Doe", 20, "male", 1000, null);
+        Employee employee = new Employee("John Doe", 20, "male", 1000);
         employeeRepository.create(employee);
         //when
         mockMvc.perform(MockMvcRequestBuilders.get("/employees/" + employee.getId()))
@@ -125,7 +125,7 @@ public class EmployeeControllerTest {
     @Test
     void should_return_employee_when_perform_put_given_updated_employee() throws Exception {
         //given
-        Employee employee = new Employee(1, "John Doe", 20, "male", 1000, null);
+        Employee employee = new Employee("John Doe", 20, "male", 1000);
         employeeRepository.create(employee);
         String updatedEmployee="{\n" +
                 "    \"age\": 23,\n" +
@@ -157,11 +157,11 @@ public class EmployeeControllerTest {
     }
 
     private void createThreeEmployees() {
-        Employee employee1 = new Employee(1, "John Doe", 20, "male", 1000, null);
+        Employee employee1 = new Employee( "John Doe", 20, "male", 1000);
         employeeRepository.create(employee1);
-        Employee employee2 = new Employee(2, "Jane Doe", 21, "female", 2000, null);
+        Employee employee2 = new Employee("Jane Doe", 21, "female", 2000);
         employeeRepository.create(employee2);
-        Employee employee3 = new Employee(3, "Doe Doe", 20, "male", 3000, null);
+        Employee employee3 = new Employee( "Doe Doe", 20, "male", 3000);
         employeeRepository.create(employee3);
     }
 }

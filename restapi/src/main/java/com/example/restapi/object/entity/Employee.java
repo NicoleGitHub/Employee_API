@@ -1,28 +1,29 @@
-package com.example.restapi.object;
+package com.example.restapi.object.entity;
 
 public class Employee {
-    private Integer id;
+    private String id;
     private String name;
     private Integer age;
     private String gender;
     private Integer salary;
-    private Integer companyId;
+    private String companyId;
 
-
-    public Employee(Integer id, String name, Integer age, String gender, Integer salary, Integer companyId) {
-        this.id = id;
+    public Employee(String name, Integer age, String gender, Integer salary) {
         this.name = name;
         this.age = age;
         this.gender = gender;
         this.salary = salary;
-        this.companyId = companyId;
     }
 
-    public Integer getId() {
+    public Employee() {
+
+    }
+
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -58,11 +59,11 @@ public class Employee {
         this.salary = salary;
     }
 
-    public Integer getCompanyId() {
+    public String getCompanyId() {
         return companyId;
     }
 
-    public void setCompanyId(Integer companyId) {
+    public void setCompanyId(String companyId) {
         this.companyId = companyId;
     }
 }

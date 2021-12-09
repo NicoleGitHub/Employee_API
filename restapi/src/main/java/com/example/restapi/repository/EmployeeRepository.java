@@ -1,7 +1,7 @@
 package com.example.restapi.repository;
 
 import com.example.restapi.exception.NoEmployeesFoundException;
-import com.example.restapi.object.Employee;
+import com.example.restapi.object.entity.Employee;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -13,12 +13,12 @@ public class EmployeeRepository {
     private List<Employee> employees = new ArrayList<>();
 
     public EmployeeRepository() {
-        employees.add(new Employee(1, "name one", 100, "male", 10000000, 1));
-        employees.add(new Employee(2, "name two", 200, "male", 20000000, 1));
-        employees.add(new Employee(3, "name three", 300, "male", 30000000, 2));
-        employees.add(new Employee(4, "name four", 400, "female", 40000000, 2));
-        employees.add(new Employee(5, "name five", 500, "female", 50000000, null));
-        employees.add(new Employee(6, "name six", 600, "female", 60000000, null));
+        employees.add(new Employee( "name one", 100, "male", 10000000));
+        employees.add(new Employee("name two", 200, "male", 20000000));
+        employees.add(new Employee("name three", 300, "male", 30000000));
+        employees.add(new Employee("name four", 400, "female", 40000000));
+        employees.add(new Employee("name five", 500, "female", 50000000));
+        employees.add(new Employee("name six", 600, "female", 60000000));
     }
 
     public List<Employee> getEmployees() {
@@ -32,7 +32,7 @@ public class EmployeeRepository {
         return employees;
     }
 
-    public Employee findById(Integer id){
+    public Employee findById(String id){
         return employees.stream()
                 .filter(employee -> employee.getId().equals(id))
                 .findFirst()
@@ -45,7 +45,7 @@ public class EmployeeRepository {
                 .collect(Collectors.toList());
     }
 
-    public Employee save(Integer id, Employee updatedEmployee) {
+    public Employee save(String id, Employee updatedEmployee) {
         Employee employee = findById(id);
         employees.remove(employee);
         employees.add(updatedEmployee);
@@ -57,16 +57,17 @@ public class EmployeeRepository {
     }
 
     public Employee create(Employee employee) {
-        Integer nextId = employees.stream()
-                                .mapToInt(Employee::getId)
-                                .max()
-                                .orElse(0)+1;
-        employee.setId(nextId);
+//        Integer nextId = employees.stream()
+//                                .mapToInt(Integer.valueOf(Employee::getId))
+//                                .max()
+//                                .orElse(0)+1;
+        Integer nextId = (employees.size()+1);
+        employee.setId(nextId.toString());
         employees.add(employee);
         return employee;
     }
 
-    public void delete(Integer id) {
+    public void delete(String id) {
         employees.remove(findById(id));
     }
 
@@ -74,7 +75,7 @@ public class EmployeeRepository {
         employees.clear();
     }
 
-    public List<Employee> findEmployeesByCompanyId(Integer companyId) {
+    public List<Employee> findEmployeesByCompanyId(String companyId) {
         return getEmployees().stream().filter(employee -> companyId.equals(employee.getCompanyId())).collect(Collectors.toList());
     }
 }

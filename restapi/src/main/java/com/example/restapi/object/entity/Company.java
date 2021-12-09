@@ -1,19 +1,19 @@
-package com.example.restapi.object;
+package com.example.restapi.object.entity;
 
 public class Company {
-    private Integer id;
+    private String id;
     private String companyName;
 
-    public Company(Integer id, String companyName) {
+    public Company(String id, String companyName) {
         this.id = id;
         this.companyName = companyName;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

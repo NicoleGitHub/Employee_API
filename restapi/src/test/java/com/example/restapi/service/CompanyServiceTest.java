@@ -1,23 +1,22 @@
 package com.example.restapi.service;
 
-import com.example.restapi.object.Company;
-import com.example.restapi.object.Employee;
+import com.example.restapi.object.entity.Company;
+import com.example.restapi.object.entity.Employee;
 import com.example.restapi.repository.CompanyRepository;
+import com.example.restapi.repository.EmployeeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
@@ -25,6 +24,9 @@ public class CompanyServiceTest {
 
     @Mock
     CompanyRepository companyRepository;
+
+    @Mock
+    EmployeeRepository employeeRepository;
 
     @Mock
     EmployeeService employeeService;
@@ -35,8 +37,10 @@ public class CompanyServiceTest {
     @BeforeEach
     void cleanRepository(){
         companyRepository.clearAll();
+        employeeRepository.clearAll();
     }
 
+    //#TODO rewrite test case
     @Test
     void should_return_employees_when_findAll_given() {
         //given
@@ -57,7 +61,7 @@ public class CompanyServiceTest {
     void should_return_employees_when_findById_given_id() {
         //given
         List<Company> companies = createCompanies();
-        Integer companyId = companies.get(0).getId();
+        String companyId = companies.get(0).getId();
 
         given(companyRepository.findById(companyId))
                 .willReturn(companies.get(0));
@@ -93,7 +97,7 @@ public class CompanyServiceTest {
     @Test
     void should_company_when_create_company_given_company() {
         //given
-        Company company = new Company(1, "Coffee Shop");
+        Company company = new Company("1", "Coffee Shop");
         given(companyRepository.create(company))
                 .willReturn(company);
 
@@ -109,9 +113,9 @@ public class CompanyServiceTest {
     void should_return_company_when_editCompany_given_id_and_company() {
         //given
         List<Company> companies = createCompanies();
-        Company updateCompany = new Company(1, "Coffee & Tea Shop");
+        Company updateCompany = new Company("1", "Coffee & Tea Shop");
         Company company = companies.get(0);
-        Integer companyId = updateCompany.getId();
+        String companyId = updateCompany.getId();
 
         given(companyService.findById(companyId))
                 .willReturn(company);
@@ -133,10 +137,12 @@ public class CompanyServiceTest {
         //given
         List<Company> companies = createCompanies();
         Company company = companies.get(0);
-        Integer companyId = company.getId();
+        String companyId = company.getId();
 
         given(companyRepository.findById(companyId))
                 .willReturn(company);
+        willDoNothing().given(companyRepository)
+                .delete(company.getId());
 
         //when
         companyService.delete(companyId);
@@ -151,9 +157,9 @@ public class CompanyServiceTest {
         //given
         List<Company> companies = createCompanies();
         Company company = companies.get(0);
-        Integer companyId = company.getId();
-        List<Employee> employees = Arrays.asList(new Employee(1, "John Doe", 20, "male", 1000, companyId),
-                new Employee(2, "Jane Doe", 21, "female", 2000, companyId));
+        String companyId = company.getId();
+        List<Employee> employees = Arrays.asList(new Employee( "John Doe", 20, "male", 1000),
+                new Employee("Jane Doe", 21, "female", 2000));
 
 
         given(employeeService.findEmployeesByCompanyId(companyId))
@@ -169,11 +175,11 @@ public class CompanyServiceTest {
 
     public List<Company> createCompanies() {
 
-        Company company1 = new Company(1, "Coffee Shop");
+        Company company1 = new Company("1", "Coffee Shop");
         companyRepository.create(company1);
-        Company company2 = new Company(2, "Tea Shop");
+        Company company2 = new Company("2", "Tea Shop");
         companyRepository.create(company2);
-        Company company3 = new Company(3, "Bakery");
+        Company company3 = new Company("3", "Bakery");
         companyRepository.create(company3);
 
         return Arrays.asList(company1, company2, company3);

@@ -1,6 +1,6 @@
 package com.example.restapi.service;
 
-import com.example.restapi.object.Employee;
+import com.example.restapi.object.entity.Employee;
 import com.example.restapi.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +19,7 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public Employee getById(Integer id) {
+    public Employee getById(String id) {
         return employeeRepository.findById(id);
     }
 
@@ -31,7 +31,7 @@ public class EmployeeService {
         return employeeRepository.findByPage(page, pageSize);
     }
 
-    public Employee edit(Integer id, Employee updatedEmployee) {
+    public Employee edit(String id, Employee updatedEmployee) {
         Employee employee = getById(id);
 
         if(updatedEmployee.getAge() != null) {
@@ -48,11 +48,11 @@ public class EmployeeService {
         return employeeRepository.create(employee);
     }
 
-    public void delete(Integer id) {
+    public void delete(String id) {
         employeeRepository.delete(id);
     }
 
-    public List<Employee> findEmployeesByCompanyId(Integer id){
+    public List<Employee> findEmployeesByCompanyId(String id){
         return employeeRepository.findEmployeesByCompanyId(id);
     }
 }

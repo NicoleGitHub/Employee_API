@@ -1,7 +1,7 @@
 package com.example.restapi.service;
 
-import com.example.restapi.object.Company;
-import com.example.restapi.object.Employee;
+import com.example.restapi.object.entity.Company;
+import com.example.restapi.object.entity.Employee;
 import com.example.restapi.repository.CompanyRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +23,11 @@ public class CompanyService {
         return companyRepository.findAll();
     }
 
-    public Company findById(Integer id) {
+    public Company findById(String id) {
         return companyRepository.findById(id);
     }
 
-    public List<Employee> findEmployeesByCompanyId(Integer companyId) {
+    public List<Employee> findEmployeesByCompanyId(String companyId) {
         return employeeService.findEmployeesByCompanyId(companyId);
     }
 
@@ -39,7 +39,7 @@ public class CompanyService {
         return companyRepository.create(company);
     }
 
-    public Company editCompany(Integer id, Company updatedCompany) {
+    public Company editCompany(String id, Company updatedCompany) {
         Company company = findById(id);
 
         if(updatedCompany.getCompanyName() != null) {
@@ -49,7 +49,7 @@ public class CompanyService {
         return companyRepository.save(id, company);
     }
 
-    public void delete(Integer id) {
+    public void delete(String id) {
         companyRepository.delete(id);
     }
 }
