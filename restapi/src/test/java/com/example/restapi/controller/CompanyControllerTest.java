@@ -64,7 +64,7 @@ public class CompanyControllerTest {
         //given
         String employee = "    {\n" +
                 "        \"id\": 1,\n" +
-                "        \"companyName\": \"company one\"\n" +
+                "        \"name\": \"company one\"\n" +
                 "    }";
         //when
         //then
@@ -72,7 +72,7 @@ public class CompanyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(employee))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.companyName").value("company one"));
+                .andExpect(jsonPath("$.name").value("company one"));
     }
 
 
@@ -132,27 +132,11 @@ public class CompanyControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/companies/" + CompanyId + "/employees"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].id").value(containsInAnyOrder(1, 2)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[*].name").value(containsInAnyOrder("John Doe", "Jane Doe")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[*].age").value(containsInAnyOrder(20, 21)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].gender").value(containsInAnyOrder("male", "female")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].salary").value(containsInAnyOrder(1000, 2000)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].companyId").value(containsInAnyOrder(1, 1)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].gender").value(containsInAnyOrder("male", "female")));
     }
 
-    @Test
-    void should_throw_exception_when_perform_get_given_companyId_and_empty_employee_repo() throws Exception {
-        //given
-        createCompanies();
-        Integer CompanyId = 1;
-
-        //when
-        //then
-        mockMvc.perform(MockMvcRequestBuilders.get("/companies/" + CompanyId + "/employees"))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("Entity Not Found."))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(404));
-    }
 
     @Test
     void should_return_employee_when_perform_put_given_updated_employee() throws Exception {
