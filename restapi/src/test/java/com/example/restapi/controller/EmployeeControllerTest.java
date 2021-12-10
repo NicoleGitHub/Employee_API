@@ -1,7 +1,7 @@
 package com.example.restapi.controller;
 
 import com.example.restapi.object.entity.Employee;
-import com.example.restapi.repository.EmployeeRepository;
+import com.example.restapi.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.hasSize;
@@ -26,30 +29,27 @@ public class EmployeeControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    //#TODO change to service
     @Autowired
-    EmployeeRepository employeeRepository;
+    EmployeeService employeeService;
 
     @BeforeEach
     void cleanRepository(){
-        employeeRepository.clearAll();
+        employeeService.clearAll();
     }
 
     @Test
     void should_get_all_employees_when_perform_when_perform_get_given_employees() throws Exception {
         //given
-        Employee employee = new Employee("John Doe", 20, "male", 1000);
-        employeeRepository.create(employee);
+        Employee employee = new Employee("John Doe", 20, "male", 1000, "1");
+        employeeService.create(employee);
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.get("/employees"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id").isNumber())
                 .andExpect(jsonPath("$[0].name").value("John Doe"))
                 .andExpect(jsonPath("$[0].age").value(20))
-                .andExpect(jsonPath("$[0].gender").value("male"))
-                .andExpect(jsonPath("$[0].salary").value(1000));
+                .andExpect(jsonPath("$[0].gender").value("male"));
     }
 
     @Test
@@ -69,24 +69,20 @@ public class EmployeeControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("John Doe"))
                 .andExpect(jsonPath("$.age").value(20))
-                .andExpect(jsonPath("$.gender").value("male"))
-                .andExpect(jsonPath("$.salary").value(1000));
+                .andExpect(jsonPath("$.gender").value("male"));
     }
-
 
     @Test
     void should_get_employee_when_perform_get_given_id() throws Exception {
         //given
-        Employee employee = new Employee("John Doe", 20, "male", 1000);
-        employeeRepository.create(employee);
+        Employee employee = new Employee("John Doe", 20, "male", 1000, "1");
+        employeeService.create(employee);
         //when
         mockMvc.perform(MockMvcRequestBuilders.get("/employees/" + employee.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(20))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("John Doe"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("male"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(1000));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(20))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("male"));
         //then
     }
 
@@ -96,14 +92,12 @@ public class EmployeeControllerTest {
         createThreeEmployees();
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.get("/employees/?page=1&pageSize=2"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/employees/?page=0&pageSize=2"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].id").value(containsInAnyOrder(1, 2)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[*].name").value(containsInAnyOrder("John Doe", "Jane Doe")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[*].age").value(containsInAnyOrder(20, 21)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].gender").value(containsInAnyOrder("male", "female")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].salary").value(containsInAnyOrder(1000, 2000)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].gender").value(containsInAnyOrder("male", "female")));
     }
 
     @Test
@@ -114,19 +108,17 @@ public class EmployeeControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/employees?gender=male"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].id").value(containsInAnyOrder(1, 3)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[*].name").value(containsInAnyOrder("John Doe", "Doe Doe")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[*].age").value(containsInAnyOrder(20, 20)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].gender").value(containsInAnyOrder("male", "male")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].salary").value(containsInAnyOrder(1000, 3000)));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].gender").value(containsInAnyOrder("male", "male")));
         //then
     }
 
     @Test
     void should_return_employee_when_perform_put_given_updated_employee() throws Exception {
         //given
-        Employee employee = new Employee("John Doe", 20, "male", 1000);
-        employeeRepository.create(employee);
+        Employee employee = new Employee("John Doe", 20, "male", 1000, "1");
+        employeeService.create(employee);
         String updatedEmployee="{\n" +
                 "    \"age\": 23,\n" +
                 "    \"salary\": 123456\n" +
@@ -137,31 +129,31 @@ public class EmployeeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedEmployee))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.age").value(23))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("John Doe"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("male"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.salary").value(123456));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.gender").value("male"));
     }
 
     @Test
     void should_delete_one_employee_when_perform_delete_given_id() throws Exception {
         //given
-        createThreeEmployees();
+        List<Employee> employees = createThreeEmployees();
         //when
-        mockMvc.perform(MockMvcRequestBuilders.delete("/employees/3"))
+        mockMvc.perform(MockMvcRequestBuilders.delete("/employees/"+ employees.get(0).getId()))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         //then
-        assertEquals(2, employeeRepository.findAll().size());
+        assertEquals(2, employeeService.findAll().size());
     }
 
-    private void createThreeEmployees() {
-        Employee employee1 = new Employee( "John Doe", 20, "male", 1000);
-        employeeRepository.create(employee1);
-        Employee employee2 = new Employee("Jane Doe", 21, "female", 2000);
-        employeeRepository.create(employee2);
-        Employee employee3 = new Employee( "Doe Doe", 20, "male", 3000);
-        employeeRepository.create(employee3);
+    private List<Employee> createThreeEmployees() {
+        Employee employee1 = new Employee( "John Doe", 20, "male", 1000, "1");
+        employeeService.create(employee1);
+        Employee employee2 = new Employee("Jane Doe", 21, "female", 2000, "1");
+        employeeService.create(employee2);
+        Employee employee3 = new Employee( "Doe Doe", 20, "male", 3000, "1");
+        employeeService.create(employee3);
+
+        return Arrays.asList(employee1, employee2, employee3);
     }
 }

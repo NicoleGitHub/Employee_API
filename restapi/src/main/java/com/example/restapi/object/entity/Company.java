@@ -2,11 +2,11 @@ package com.example.restapi.object.entity;
 
 public class Company {
     private String id;
-    private String companyName;
+    private String name;
 
-    public Company(String id, String companyName) {
+    public Company(String id, String name) {
         this.id = id;
-        this.companyName = companyName;
+        this.name = name;
     }
 
     public String getId() {
@@ -17,12 +17,12 @@ public class Company {
         this.id = id;
     }
 
-    public String getCompanyName() {
-        return companyName;
+    public String getName() {
+        return name;
     }
 
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

@@ -1,20 +1,26 @@
 package com.example.restapi.service;
 
+import com.example.restapi.mapper.CompanyMapper;
+import com.example.restapi.object.bo.CompanyWithEmployee;
 import com.example.restapi.object.entity.Company;
 import com.example.restapi.object.entity.Employee;
-import com.example.restapi.repository.CompanyRepository;
-import com.example.restapi.repository.EmployeeRepository;
+import com.example.restapi.repository.CompanyRepositoryNew;
+import com.example.restapi.repository.EmployeeRepositoryNew;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
@@ -23,38 +29,60 @@ import static org.mockito.Mockito.verify;
 public class CompanyServiceTest {
 
     @Mock
-    CompanyRepository companyRepository;
+    EmployeeRepositoryNew employeeRepositoryNew;
 
     @Mock
-    EmployeeRepository employeeRepository;
+    CompanyRepositoryNew companyRepositoryNew;
 
     @Mock
     EmployeeService employeeService;
+
+    @Mock
+    CompanyMapper companyMapper;
 
     @InjectMocks
     CompanyService companyService;
 
     @BeforeEach
     void cleanRepository(){
-        companyRepository.clearAll();
-        employeeRepository.clearAll();
+        companyService.clearAll();
+        employeeService.clearAll();
     }
 
-    //#TODO rewrite test case
     @Test
-    void should_return_employees_when_findAll_given() {
+    void should_return_company_with_employees_when_findAll_given() {
         //given
+        Employee employee = new Employee("John Doe", 20, "male", 1000, "1");
+        employeeRepositoryNew.insert(employee);
+        List<Employee> employees = Arrays.asList(employee);
         List<Company> companies = createCompanies();
 
-        given(companyRepository.findAll())
+        CompanyWithEmployee companyWithEmployee1 = new CompanyWithEmployee(companies.get(0).getId(), companies.get(0).getName(), employees);
+        CompanyWithEmployee companyWithEmployee2 = new CompanyWithEmployee(companies.get(1).getId(), companies.get(1).getName(), new ArrayList<>());
+        CompanyWithEmployee companyWithEmployee3 = new CompanyWithEmployee(companies.get(2).getId(), companies.get(2).getName(), new ArrayList<>());
+        List<CompanyWithEmployee> companyWithEmployees = Arrays.asList(companyWithEmployee1, companyWithEmployee2, companyWithEmployee3);
+
+        given(companyRepositoryNew.findAll())
                 .willReturn(companies);
 
+        given(companyService.findEmployeesByCompanyId("1"))
+                .willReturn(employees);
+
+        given(companyMapper.toCompanyWithEmployee(companies.get(0), employees))
+                .willReturn(companyWithEmployee1);
+
+        given(companyMapper.toCompanyWithEmployee(companies.get(1), new ArrayList<>()))
+                .willReturn(companyWithEmployee2);
+
+        given(companyMapper.toCompanyWithEmployee(companies.get(2), new ArrayList<>()))
+                .willReturn(companyWithEmployee3);
+
         //when
-        List<Company> actual = companyService.findAll();
+        List<CompanyWithEmployee> actual = companyService.findAll();
 
         //then
-        verify(companyRepository).findAll();
-        assertEquals(companies, actual);
+        verify(companyRepositoryNew).findAll();
+        assertEquals(companyWithEmployees, actual);
     }
 
     @Test
@@ -63,14 +91,14 @@ public class CompanyServiceTest {
         List<Company> companies = createCompanies();
         String companyId = companies.get(0).getId();
 
-        given(companyRepository.findById(companyId))
-                .willReturn(companies.get(0));
+        given(companyRepositoryNew.findById(companyId))
+                .willReturn(java.util.Optional.ofNullable(companies.get(0)));
 
         //when
         Company actual = companyService.findById(companyId);
 
         //then
-        verify(companyRepository).findById(companyId);
+        verify(companyRepositoryNew).findById(companyId);
         assertEquals(companies.get(0), actual);
     }
 
@@ -79,33 +107,42 @@ public class CompanyServiceTest {
     void should_return_companies_when_findByPage_given_page_and_pageSize() {
         //given
         List<Company> companies = createCompanies();
+        List<Employee> employees = createEmployees();
         Integer page = 1;
         Integer pageSize = 2;
         List<Company> companiesOnPage = companies.subList(1,2);
 
-        given(companyRepository.findByPage(page, pageSize))
-                .willReturn(companiesOnPage);
+        CompanyWithEmployee companyWithEmployee = new CompanyWithEmployee(companies.get(0).getId(), companies.get(0).getName(), employees);
+        List<CompanyWithEmployee> companyWithEmployees = Arrays.asList(companyWithEmployee);
+
+        given(companyMapper.toCompanyWithEmployee(any(), any()))
+                .willReturn(companyWithEmployee);
+
+        given(companyRepositoryNew.findAll(PageRequest.of(page, pageSize)))
+                .willReturn(new PageImpl<>(companiesOnPage, PageRequest.of(1, 2), 1));
 
         //when
-        List<Company> actualList = companyService.findByPage(page, pageSize);
+        List<CompanyWithEmployee> actualList = companyService.findByPage(page, pageSize);
 
         //then
-        verify(companyRepository).findByPage(page, pageSize);
-        assertEquals(companiesOnPage, actualList);
+        verify(companyRepositoryNew).findAll(PageRequest.of(page,pageSize));
+        assertEquals(companyWithEmployees, actualList);
+        assertEquals(companyWithEmployees.size(), actualList.size());
+        assertEquals(companyWithEmployees.get(0).getName(), actualList.get(0).getName());
     }
 
     @Test
     void should_company_when_create_company_given_company() {
         //given
         Company company = new Company("1", "Coffee Shop");
-        given(companyRepository.create(company))
+        given(companyRepositoryNew.insert(company))
                 .willReturn(company);
 
         //when
         Company actual = companyService.create(company);
 
         //then
-        verify(companyRepository).create(company);
+        verify(companyRepositoryNew).insert(company);
         assertEquals(company, actual);
     }
 
@@ -117,12 +154,12 @@ public class CompanyServiceTest {
         Company company = companies.get(0);
         String companyId = updateCompany.getId();
 
-        given(companyService.findById(companyId))
-                .willReturn(company);
+        given(companyRepositoryNew.findById(companyId))
+                .willReturn(java.util.Optional.ofNullable(company));
 
-        company.setCompanyName(updateCompany.getCompanyName());
+        company.setName(updateCompany.getName());
 
-        given(companyRepository.save(companyId, company))
+        given(companyRepositoryNew.save(company))
                 .willReturn(updateCompany);
 
         //when
@@ -139,27 +176,27 @@ public class CompanyServiceTest {
         Company company = companies.get(0);
         String companyId = company.getId();
 
-        given(companyRepository.findById(companyId))
-                .willReturn(company);
-        willDoNothing().given(companyRepository)
-                .delete(company.getId());
+        given(companyRepositoryNew.findById(companyId))
+                .willReturn(java.util.Optional.of(company));
+        willDoNothing().given(companyRepositoryNew)
+                .deleteById(company.getId());
 
         //when
         companyService.delete(companyId);
 
         //then
-        verify(companyRepository).delete(companyId);
+        verify(companyRepositoryNew).deleteById(companyId);
     }
 
-    
+
     @Test
     void should_return_employees_when_findEmployeesByCompanyId_given_companyId() {
         //given
         List<Company> companies = createCompanies();
         Company company = companies.get(0);
         String companyId = company.getId();
-        List<Employee> employees = Arrays.asList(new Employee( "John Doe", 20, "male", 1000),
-                new Employee("Jane Doe", 21, "female", 2000));
+        List<Employee> employees = Arrays.asList(new Employee( "John Doe", 20, "male", 1000, "1"),
+                new Employee("Jane Doe", 21, "female", 2000, "1"));
 
 
         given(employeeService.findEmployeesByCompanyId(companyId))
@@ -176,13 +213,24 @@ public class CompanyServiceTest {
     public List<Company> createCompanies() {
 
         Company company1 = new Company("1", "Coffee Shop");
-        companyRepository.create(company1);
+        companyRepositoryNew.insert(company1);
         Company company2 = new Company("2", "Tea Shop");
-        companyRepository.create(company2);
+        companyRepositoryNew.insert(company2);
         Company company3 = new Company("3", "Bakery");
-        companyRepository.create(company3);
+        companyRepositoryNew.insert(company3);
 
         return Arrays.asList(company1, company2, company3);
+    }
+
+    private List<Employee> createEmployees() {
+        Employee employee1 = new Employee("John Doe", 20, "male", 1000, "1");
+        employeeRepositoryNew.insert(employee1);
+        Employee employee2 = new Employee("Jane Doe", 21, "female", 2000, "1");
+        employeeRepositoryNew.insert(employee2);
+        Employee employee3 = new Employee("Doe Doe", 20, "male", 3000, "1");
+        employeeRepositoryNew.insert(employee3);
+
+        return Arrays.asList(employee1, employee2, employee3);
     }
 
 }

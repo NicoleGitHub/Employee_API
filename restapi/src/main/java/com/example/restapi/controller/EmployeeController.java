@@ -2,7 +2,7 @@ package com.example.restapi.controller;
 
 import com.example.restapi.mapper.EmployeeMapper;
 import com.example.restapi.object.dto.EmployeeRequest;
-import com.example.restapi.object.entity.Employee;
+import com.example.restapi.object.dto.EmployeeResponse;
 import com.example.restapi.service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,34 +22,34 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public List<Employee> getAllEmployees() {
-        return employeeService.findAll();
+    public List<EmployeeResponse> getAllEmployees() {
+        return employeeMapper.toResponses(employeeService.findAll());
     }
 
     @GetMapping("/{id}")
-    public Employee getEmployeesByID(@PathVariable String id) {
-        return employeeService.getById(id);
+    public EmployeeResponse getEmployeesByID(@PathVariable String id) {
+        return employeeMapper.toResponse(employeeService.findById(id));
     }
 
     @GetMapping(params = {"gender"})
-    public List<Employee> getEmployeesByGender(@RequestParam String gender) {
-        return employeeService.getByGender(gender);
+    public List<EmployeeResponse> getEmployeesByGender(@RequestParam String gender) {
+        return employeeMapper.toResponses(employeeService.getByGender(gender));
     }
 
     @GetMapping(params = {"page", "pageSize"})
-    public List<Employee> getEmployeeByPage(@RequestParam Integer page, @RequestParam Integer pageSize) {
-        return employeeService.findByPage(page, pageSize);
+    public List<EmployeeResponse> getEmployeeByPage(@RequestParam Integer page, @RequestParam Integer pageSize) {
+        return employeeMapper.toResponses(employeeService.findByPage(page, pageSize));
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Employee addEmployee(@RequestBody EmployeeRequest employeeRequest) {
-        return employeeService.create(employeeMapper.toEntity(employeeRequest));
+    public EmployeeResponse addEmployee(@RequestBody EmployeeRequest employeeRequest) {
+        return employeeMapper.toResponse(employeeService.create(employeeMapper.toEntity(employeeRequest)));
     }
 
     @PutMapping("/{id}")
-    public Employee editEmployee(@PathVariable String id, @RequestBody EmployeeRequest employeeRequest) {
-        return employeeService.edit(id, employeeMapper.toEntity(employeeRequest)) ;
+    public EmployeeResponse editEmployee(@PathVariable String id, @RequestBody EmployeeRequest employeeRequest) {
+        return employeeMapper.toResponse(employeeService.edit(id, employeeMapper.toEntity(employeeRequest)));
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -57,4 +57,5 @@ public class EmployeeController {
     public void deleteEmployee(@PathVariable String id) {
         employeeService.delete(id);
     }
+
 }

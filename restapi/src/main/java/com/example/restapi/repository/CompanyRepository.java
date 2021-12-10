@@ -34,19 +34,14 @@ public class CompanyRepository {
     }
 
     public Company create(Company company) {
-//        Integer nextId = companies.stream()
-//                .mapToInt(Company::getId)
-//                .max()
-//                .orElse(0)+1;
-        company.setId(String.valueOf(companies.size()+1));
         companies.add(company);
         return company;
     }
 
     public Company save(String id, Company updatedCompany) {
         Company company = findById(id);
-        if(updatedCompany.getCompanyName().isEmpty()) {
-            company.setCompanyName(updatedCompany.getCompanyName());
+        if(updatedCompany.getName().isEmpty()) {
+            company.setName(updatedCompany.getName());
         }
         return updatedCompany;
     }

@@ -1,7 +1,9 @@
 package com.example.restapi.service;
 
+import com.example.restapi.exception.NoEmployeesFoundException;
 import com.example.restapi.object.entity.Employee;
-import com.example.restapi.repository.EmployeeRepository;
+import com.example.restapi.repository.EmployeeRepositoryNew;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,30 +11,30 @@ import java.util.List;
 @Service
 public class EmployeeService {
 
-    private EmployeeRepository employeeRepository;
+    private EmployeeRepositoryNew employeeRepositoryNew;
 
-    public EmployeeService(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public EmployeeService(EmployeeRepositoryNew employeeRepositoryNew) {
+        this.employeeRepositoryNew = employeeRepositoryNew;
     }
 
     public List<Employee> findAll() {
-        return employeeRepository.findAll();
+        return employeeRepositoryNew.findAll();
     }
 
-    public Employee getById(String id) {
-        return employeeRepository.findById(id);
+    public Employee findById(String id) {
+        return employeeRepositoryNew.findById(id).orElseThrow(NoEmployeesFoundException::new);
     }
 
     public List<Employee> getByGender(String gender) {
-        return employeeRepository.findByGender(gender);
+        return employeeRepositoryNew.findAllByGender(gender);
     }
 
     public List<Employee> findByPage(Integer page, Integer pageSize) {
-        return employeeRepository.findByPage(page, pageSize);
+        return employeeRepositoryNew.findAll(PageRequest.of(page,pageSize)).getContent();
     }
 
     public Employee edit(String id, Employee updatedEmployee) {
-        Employee employee = getById(id);
+        Employee employee = findById(id);
 
         if(updatedEmployee.getAge() != null) {
             employee.setAge(updatedEmployee.getAge());
@@ -41,18 +43,26 @@ public class EmployeeService {
             employee.setSalary(updatedEmployee.getSalary());
         }
 
-        return employeeRepository.save(id, employee);
+        return save(employee);
+    }
+
+    public Employee save(Employee employee) {
+        return employeeRepositoryNew.save(employee);
     }
 
     public Employee create(Employee employee) {
-        return employeeRepository.create(employee);
+        return employeeRepositoryNew.insert(employee);
     }
 
     public void delete(String id) {
-        employeeRepository.delete(id);
+        employeeRepositoryNew.deleteById(id);
     }
 
-    public List<Employee> findEmployeesByCompanyId(String id){
-        return employeeRepository.findEmployeesByCompanyId(id);
+    public List<Employee> findEmployeesByCompanyId(String companyId){
+        return employeeRepositoryNew.findAllByCompanyId(companyId);
+    }
+
+    public void clearAll() {
+        employeeRepositoryNew.deleteAll();
     }
 }

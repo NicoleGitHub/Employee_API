@@ -2,8 +2,8 @@ package com.example.restapi.controller;
 
 import com.example.restapi.object.entity.Company;
 import com.example.restapi.object.entity.Employee;
-import com.example.restapi.repository.CompanyRepository;
-import com.example.restapi.repository.EmployeeRepository;
+import com.example.restapi.service.CompanyService;
+import com.example.restapi.service.EmployeeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,32 +31,32 @@ public class CompanyControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    //#TODO change to service
     @Autowired
-    CompanyRepository companyRepository;
+    CompanyService companyService;
 
     @Autowired
-    EmployeeRepository employeeRepository;
+    EmployeeService employeeService;
 
     @BeforeEach
     void cleanRepository(){
-        companyRepository.clearAll();
-        employeeRepository.clearAll();
+        companyService.clearAll();
+        employeeService.clearAll();
     }
 
     @Test
     void should_get_all_companies_when_perform_findAll_given() throws Exception {
         //given
-        Company company = new Company("1", "a");
-        companyRepository.create(company);
+        Company company = new Company("1", "Tea Shop");
+        companyService.create(company);
+        List<Employee> employees = createEmployees();
 
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.get("/companies"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].id").isNumber())
-                .andExpect(jsonPath("$[0].companyName").value("a"));
+                .andExpect(jsonPath("$[*].name").value("Tea Shop"))
+                .andExpect(jsonPath("$[*].employees[0].name").value(employees.get(0).getName()));
     }
 
     @Test
@@ -72,7 +72,6 @@ public class CompanyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(employee))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").isNumber())
                 .andExpect(jsonPath("$.companyName").value("company one"));
     }
 
@@ -81,13 +80,12 @@ public class CompanyControllerTest {
     void should_get_employee_when_perform_get_given_id() throws Exception {
         //given
         Company company = new Company("1", "a");
-        companyRepository.create(company);
+        companyService.create(company);
         //when
         //then
         mockMvc.perform(MockMvcRequestBuilders.get("/companies/" + company.getId()))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.companyName").value("a"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("a"));
     }
 
     @Test
@@ -104,16 +102,19 @@ public class CompanyControllerTest {
     }
 
     @Test
-    void should_get_employees_when_perform_get_given_page_and_pageSize() throws Exception {
+    void should_get_companies_with_employees_when_perform_get_given_page_and_pageSize() throws Exception {
         //given
+        Employee employee = new Employee("John Doe", 20, "male", 1000, "1");
+        employeeService.create(employee);
         createCompanies();
+        System.out.println("cecking" + employeeService.findAll().get(0).getCompanyId() + "cecking" +companyService.findAll().get(0).getId() );
         //when
         //then
-        mockMvc.perform(MockMvcRequestBuilders.get("/companies/?page=1&pageSize=2"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/companies/?page=0&pageSize=2"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(2)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].id").value(containsInAnyOrder(1, 2)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[*].companyName").value(containsInAnyOrder("Coffee Shop", "Tea Shop")));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].name").value(containsInAnyOrder("Coffee Shop", "Tea Shop")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[*].employees[0].name").value(containsInAnyOrder("John Doe")));
     }
 
     @Test
@@ -121,10 +122,10 @@ public class CompanyControllerTest {
         //given
         createCompanies();
         Integer CompanyId = 1;
-        Employee employee1 = new Employee( "John Doe", 20, "male", 1000);
-        employeeRepository.create(employee1);
-        Employee employee2 = new Employee( "Jane Doe", 21, "female", 2000);
-        employeeRepository.create(employee2);
+        Employee employee1 = new Employee( "John Doe", 20, "male", 1000, "1");
+        employeeService.create(employee1);
+        Employee employee2 = new Employee( "Jane Doe", 21, "female", 2000, "1");
+        employeeService.create(employee2);
         
         //when
         //then
@@ -158,7 +159,7 @@ public class CompanyControllerTest {
         //given
         //given
         Company company = new Company("1", "a");
-        companyRepository.create(company);
+        companyService.create(company);
         String updatedCompany = "    {\n" +
                 "        \"id\": 1,\n" +
                 "        \"companyName\": \"a\"\n" +
@@ -169,8 +170,8 @@ public class CompanyControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedCompany))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").isNumber())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.companyName").value("a"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("a"));
     }
 
     @Test
@@ -182,19 +183,31 @@ public class CompanyControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         //then
-        assertEquals(2, companyRepository.findAll().size());
+        assertEquals(2, companyService.findAll().size());
     }
 
     public List<Company> createCompanies() {
 
         Company company1 = new Company("1", "Coffee Shop");
-        companyRepository.create(company1);
+        companyService.create(company1);
         Company company2 = new Company("2", "Tea Shop");
-        companyRepository.create(company2);
+        companyService.create(company2);
         Company company3 = new Company("3", "Bakery");
-        companyRepository.create(company3);
+        companyService.create(company3);
 
         return Arrays.asList(company1, company2, company3);
+    }
+
+    public List<Employee> createEmployees() {
+
+        Employee employee1 = new Employee("John Doe", 20, "male", 1000, "1");
+        employeeService.create(employee1);
+        Employee employee2 = new Employee("Jane Doe", 21, "female", 2000, "1");
+        employeeService.create(employee2);
+        Employee employee3 = new Employee("Doe Doe", 20, "male", 3000, "1");
+        employeeService.create(employee3);
+
+        return Arrays.asList(employee1, employee2, employee3);
     }
 
 }

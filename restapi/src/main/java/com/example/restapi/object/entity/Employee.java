@@ -1,6 +1,12 @@
 package com.example.restapi.object.entity;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.FieldType;
+import org.springframework.data.mongodb.core.mapping.MongoId;
+
+@Document
 public class Employee {
+    @MongoId(FieldType.OBJECT_ID)
     private String id;
     private String name;
     private Integer age;
@@ -8,11 +14,12 @@ public class Employee {
     private Integer salary;
     private String companyId;
 
-    public Employee(String name, Integer age, String gender, Integer salary) {
+    public Employee(String name, Integer age, String gender, Integer salary, String companyId) {
         this.name = name;
         this.age = age;
         this.gender = gender;
         this.salary = salary;
+        this.companyId = companyId;
     }
 
     public Employee() {
